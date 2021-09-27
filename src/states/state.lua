@@ -1,0 +1,31 @@
+State = Object:extend()
+
+function State:new()
+end
+
+function State:enter()
+end
+
+function State:exit()
+end
+
+function State:draw()
+end
+
+function State:input(key)
+end
+
+function State:update(dt)
+end
+
+function State:mousemoved(x, y, dx, dy, istouch)
+end
+
+function State:mousepressed(x, y, button, istouch, presses)
+end
+
+function State:mousereleased(x, y, button, istouch, presses)
+end
+
+function State:resize()
+end
