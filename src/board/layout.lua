@@ -2,43 +2,46 @@ local NLay = require "src/lib/nlay"
 
 Layout = Object:extend()
 
+local lw = love.window
+local lg = love.graphics
+
 function Layout:new(blocks)
-    NLay.update(love.window.getSafeArea())
+    NLay.update(lw.getSafeArea())
 
     self.padding = 40
 
     local root = NLay
     local insideRoot = NLay.inside(root, self.padding)
+    local height = lg.getHeight() - (self.padding * 2)
 
     self.grid = insideRoot:constraint(root, root)
-                     :size(love.graphics.getWidth()-(200+(self.padding * 2)), love.graphics.getHeight()-(self.padding * 2))
+    :size(lg.getWidth() - (400 + (self.padding * 2)), height)
 
     self.side = insideRoot:constraint(root, self.grid, nil, root)
-                     :size(0, love.graphics.getHeight()-(self.padding * 2))
-                     :margin({nil, self.padding})
+    :size(0, height)
+    :margin({nil, self.padding})
 end
 
 function Layout:draw()
-    love.graphics.setColor(0.1, 0.1, 0.1)
-    love.graphics.rectangle("fill", self.grid:get())
-    love.graphics.setColor(0.1, 0.1, 0.1)
-    love.graphics.rectangle("fill", self.side:get())
-    love.graphics.setColor(0, 0, 0)
+    lg.setColor(0.1, 0.1, 0.1)
+    lg.rectangle("fill", self.grid:get())
+    lg.rectangle("fill", self.side:get())
+    lg.setColor(0, 0, 0)
 end
 
 function Layout:resize()
-    NLay.update(love.window.getSafeArea())
+    NLay.update(lw.getSafeArea())
 end
 
 function Layout:get_grid_rect()
-	return self.grid:get()
+    return self.grid:get()
 end
 
 function Layout:get_grid_center()
     local x, y, w, h = self.grid:get()
-    return Vector(x + (w/2), y + (h/2))
+    return Vector(x + (w / 2), y + (h / 2))
 end
 
 function Layout:get_side_rect()
-	return self.side:get()
+    return self.side:get()
 end

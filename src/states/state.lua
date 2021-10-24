@@ -9,6 +9,12 @@ end
 function State:exit()
 end
 
+function State:pause()
+end
+
+function State:unpause()
+end
+
 function State:draw()
 end
 

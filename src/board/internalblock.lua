@@ -2,9 +2,9 @@ InternalBlock = Block:extend()
 
 function InternalBlock:new(column, row)
     InternalBlock.super.new(self, column, row)
-    
-	self._status = 0
-	self._neighbors = { }
+
+    self._status = 0
+    self._neighbors = {}
 end
 
 function InternalBlock:disable()
@@ -29,6 +29,6 @@ function InternalBlock:init_neighbors(columns, rows)
     end
 
     if self:row() + 1 <= rows then
-        self._neighbors[#self._neighbors + 1] = Coordinate(self:column(), self:row() + 1) 
+        self._neighbors[#self._neighbors + 1] = Coordinate(self:column(), self:row() + 1)
     end
 end
