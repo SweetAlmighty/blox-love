@@ -1,56 +1,81 @@
+require "src/ui/gameui"
+require "src/ui/pauseui"
 require "src/board/board"
 
 Gameplay = State:extend()
 
-local function draw_reset_button()
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.rectangle('line', 50, 1, 100, 30)
-    love.graphics.print('Reset', 51, 2)
+local gameui = nil
+local pauseui = nil
+local paused = false
+
+local function TogglePause()
+    paused = not paused
+    pauseui:setVisible(paused)
 end
 
 function Gameplay:new()
-	self._board = Board()
+    Gameplay.super.new(self)
+    self._board = Board()
+
+    local function reset()
+        TogglePause()
+        self._board:reset()
+        gameui:resetClicked()
+    end
+
+    self._board:setOnGridComplete(function()
+        paused = not paused
+        self._win:play()
+        gooi.alert({
+            text = "Success!",
+            ok = reset
+        })
+    end)
+
+    self._win = Resources.LoadSFX('Win sound 6')
     self._music = Resources.LoadMusic('Casual - Level 2 (Loop_01)')
+
+    gameui = GameUI(TogglePause)
+    pauseui = PauseUI(reset, reset)
 end
 
 function Gameplay:enter()
-	print("Entering Gameplay")
+    Gameplay.super.enter(self)
+    gameui:setVisible(true)
     self._music:play_looping()
 end
 
 function Gameplay:exit()
-	print("Exiting Gameplay")
-    --self._music:stop()
+    Gameplay.super.exit(self)
+    paused = false
+    self._music:stop()
+    gameui:setVisible(false)
+    pauseui:setVisible(false)
 end
+
+function Gameplay:input(key) end
 
 function Gameplay:draw()
     self._board:draw()
-    draw_reset_button()
+    if paused then
+        pauseui:draw()
+    end
 end
 
-function Gameplay:input(key)
-end
+function Gameplay:resize() self._board:resize() end
 
 function Gameplay:update(dt)
-    self._board:update(dt)
+    if not paused then self._board:update(dt) end
 end
 
 function Gameplay:mousemoved(x, y, dx, dy, istouch)
-    self._board:mouse_moved(dx,dy)
+    if not paused then self._board:mouse_moved(dx, dy) end
 end
 
 function Gameplay:mousepressed(x, y, button, istouch, presses)
-    if x >= 50 and x <= 150 and y > 1 and y < 30 then
-        self._board:reset()
-    end
-
-    self._board:mouse_pressed(x,y)
+    if not paused then self._board:mouse_pressed(x, y) end
 end
 
 function Gameplay:mousereleased(x, y, button, istouch, presses)
-    self._board:mouse_released()
-end
-
-function Gameplay:resize()
-	self._board:resize()
+    if not paused then self._board:mouse_released() end
 end

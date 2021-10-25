@@ -1,4 +1,4 @@
-function distance(p1,p2)
+function distance(p1, p2)
     local dx = p1.x - p2.x
     local dy = p1.y - p2.y
     local s = dx * dx + dy * dy
@@ -6,21 +6,21 @@ function distance(p1,p2)
 end
 
 function shuffle(list)
-    local shuffled = { }
+    local shuffled = {}
     for _, v in ipairs(list) do
-        local pos = math.random(1, #shuffled+1)
+        local pos = math.random(1, #shuffled + 1)
         table.insert(shuffled, pos, v)
     end
     return shuffled
 end
 
 function find_index(table, entry)
-    for i=1, #table, 1 do if table[i] == entry then return i end end
-    return nil
+    for i = 1, #table, 1 do if table[i] == entry then return i end end
+return nil
 end
 
 function wipe(table)
-    for i=1, #table, 1 do
+    for i = 1, #table, 1 do
         table[i] = nil
     end
 end

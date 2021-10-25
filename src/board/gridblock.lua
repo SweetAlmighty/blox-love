@@ -7,9 +7,9 @@ local hover = Color(0.5, 0.5, 0.5)
 
 function GridBlock:new(column, row, start)
     GridBlock.super.new(self, CollidableBlock.types.GRID, column, row)
-    
+
     self._occupied = false
-    self._position = Vector(start.x + ((column-1) * Block.width), start.y + ((row-1) * Block.height))
+    self._position = Vector(start.x + ((column - 1) * Block.width), start.y + ((row - 1) * Block.height))
 end
 
 function GridBlock:set_base_color(snappable)

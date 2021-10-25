@@ -1,23 +1,27 @@
 Object = require "src/lib/classic"
 
+require "src/lib/gooi"
 require "src/utils/util"
-require "src/utils/resources"
-
-menuFont = Resources.LoadFont("Uni Sans Thin", 15)
-titleFont = Resources.LoadFont("Uni Sans Heavy", 50)
-
-require "src/states/menu"
 require "src/utils/input"
 require "src/utils/color"
+require "src/utils/resources"
 require "src/states/statemachine"
 
-screen_width = 800
-screen_height = 600
+screen_width = 1280
+screen_height = 720
 
 state_machine = StateMachine()
 
+local style = {
+    showBorder = false,
+    bgColor = {0.5, 0.5, 1},
+    font = Resources.LoadFont("Uni Sans Heavy", 40)
+}
+
 function love.load()
     math.randomseed((os.time()))
+    gooi.setStyle(style)
+    gooi.desktopMode()
     state_machine:push(GameStates.MainMenu)
 end
 
@@ -27,21 +31,26 @@ end
 
 function love.draw()
     state_machine:draw()
+    gooi.draw()
 end
 
 function love.update(dt)
+    gooi.update(dt)
     state_machine:update(dt)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    gooi.moved()
     state_machine:mousemoved(x, y, dx, dy, istouch)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    gooi.pressed()
     state_machine:mousepressed(x, y, button, istouch, presses)
 end
 
 function love.mousereleased(x, y, button, istouch, presses)
+    gooi.released()
     state_machine:mousereleased(x, y, button, istouch, presses)
 end
 

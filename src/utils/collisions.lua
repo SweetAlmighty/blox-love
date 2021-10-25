@@ -53,7 +53,7 @@ function check_collisions(blocks)
         end
 
         handle_collisions(blocks[i], collisions)
-        
+
         wipe(collisions)
     end
 end
