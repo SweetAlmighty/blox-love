@@ -9,15 +9,10 @@ local font_type = ".otf"
 local font_path = "/data/fonts/"
 local function font(name) return (font_path .. name .. font_type) end
 
-local anims = {}
-local anim_type = ".json"
-local anim_path = "/data/images/anims/"
-local function anim(name) return (anim_path .. name .. anim_type) end
-
-local sheets = {}
-local sheet_type = ".json"
-local sheet_path = "/data/images/sheet/"
-local function sheet(name) return (sheet_path .. name .. sheet_type) end
+local data = {}
+local data_type = ".json"
+local data_path = "/data/json/"
+local function datum(name) return (data_path .. name .. data_type) end
 
 local images = {}
 local image_type = ".png"
@@ -39,7 +34,6 @@ Resources = {
         local path = image(name)
         if lf.getInfo(path) then
             images[name] = lg.newImage(path)
-            --images[name]:setFilter("nearest", "nearest")
             return images[name]
         end
         print("Image Error: Image at " .. path .. " could not be found.")
@@ -51,32 +45,20 @@ Resources = {
         local path = font(name)
         if lf.getInfo(path) then
             fonts[name] = lg.newFont(path, size)
-            --fonts[name]:setFilter("nearest", "nearest")
             return fonts[name]
         end
         print("Font Error: Font at " .. path .. " could not be found.")
         return nil
     end,
 
-    LoadSheet = function(name)
-        if find_index(sheets, name) then return sheets[name] end
-        local path = sheet(name)
+    LoadData = function(name)
+        if find_index(data, name) then return data[name] end
+        local path = datum(name)
         if lf.getInfo(path) then
-            sheets[name] = json.decode(lf.read(path))
-            return sheets[name]
+            data[name] = json.decode(lf.read(path))
+            return data[name]
         end
-        print("Sheet Error: Sheet at " .. path .. " could not be found.")
-        return nil
-    end,
-
-    LoadAnim = function(name)
-        if find_index(anims, name) then return anims[name] end
-        local path = anim(name)
-        if lf.getInfo(path) then
-            anims[name] = json.decode(lf.read(path))
-            return anims[name]
-        end
-        print("Anim Error: Animation at " .. path .. " could not be found.")
+        print("Data Error: DAta at " .. path .. " could not be found.")
         return nil
     end,
 

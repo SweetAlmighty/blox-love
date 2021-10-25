@@ -1,27 +1,6 @@
 Shape = Object:extend()
 
 local color_index = 1
-local colors = {
-    Color(230 / 255, 25 / 255, 75 / 255),
-    Color(60 / 255, 180 / 255, 75 / 255),
-    Color(1, 225 / 255, 25 / 255),
-    Color(0, 130 / 255, 200 / 255),
-    Color(245 / 255, 130 / 255, 48 / 255),
-    Color(145 / 255, 30 / 255, 180 / 255),
-    Color(70 / 255, 240 / 255, 240 / 255),
-    Color(240 / 255, 50 / 255, 230 / 255),
-    Color(210 / 255, 245 / 255, 60 / 255),
-    Color(250 / 255, 190 / 255, 212 / 255),
-    Color(0, 128 / 255, 128 / 255),
-    Color(220 / 255, 190 / 255, 1),
-    Color(170 / 255, 110 / 255, 40 / 255),
-    Color(1, 250 / 255, 200 / 255),
-    Color(128 / 255, 0, 0),
-    Color(170 / 255, 1, 195 / 255),
-    Color(128 / 255, 128 / 255, 0),
-    Color(1, 215 / 255, 180 / 255),
-    Color(0, 0, 128 / 255),
-}
 
 local function get_block(pos)
     if pos.row > 0 and pos.row <= Grid.rows then
@@ -92,8 +71,8 @@ function Shape:new(blocks)
     self._snapped = false
     self._blocks = blocks
     self._snap_points = {}
-    self._color = colors[color_index]
-    color_index = color_index == #colors and 1 or color_index + 1
+    self._color = Color.colors[color_index]
+    color_index = color_index == #Color.colors and 1 or color_index + 1
 
     for i = 1, #self._blocks, 1 do
         self._blocks[i]:set_color(self._color)
