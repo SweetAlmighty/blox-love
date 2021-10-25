@@ -14,6 +14,7 @@ local function TogglePause()
 end
 
 function Gameplay:new()
+    Gameplay.super.new(self)
     self._board = Board()
 
     local function reset()
@@ -24,12 +25,14 @@ function Gameplay:new()
 
     self._board:setOnGridComplete(function()
         paused = not paused
+        self._win:play()
         gooi.alert({
             text = "Success!",
             ok = reset
         })
     end)
 
+    self._win = Resources.LoadSFX('Win sound 6')
     self._music = Resources.LoadMusic('Casual - Level 2 (Loop_01)')
 
     gameui = GameUI(TogglePause)
@@ -37,11 +40,13 @@ function Gameplay:new()
 end
 
 function Gameplay:enter()
+    Gameplay.super.enter(self)
     gameui:setVisible(true)
     self._music:play_looping()
 end
 
 function Gameplay:exit()
+    Gameplay.super.exit(self)
     paused = false
     self._music:stop()
     gameui:setVisible(false)

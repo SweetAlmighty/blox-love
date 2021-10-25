@@ -15,15 +15,13 @@ state_machine = StateMachine()
 local style = {
     showBorder = false,
     bgColor = {0.5, 0.5, 1},
-    font = Resources.LoadFont("Uni Sans Heavy", 30)
+    font = Resources.LoadFont("Uni Sans Heavy", 40)
 }
 
 function love.load()
     math.randomseed((os.time()))
-
     gooi.setStyle(style)
-    --gooi.desktopMode()
-
+    gooi.desktopMode()
     state_machine:push(GameStates.MainMenu)
 end
 
