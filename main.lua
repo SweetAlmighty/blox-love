@@ -3,8 +3,8 @@ Object = require "src/lib/classic"
 require "src/lib/gooi"
 require "src/utils/util"
 require "src/utils/input"
-require "src/utils/color"
 require "src/utils/resources"
+require "src/utils/color"
 require "src/states/statemachine"
 
 screen_width = 1280
