@@ -121,7 +121,6 @@ function PauseUI:new(onReset, onSkip)
 end
 
 function PauseUI:draw()
-    -- 
     love.graphics.setColor(0.25, 0.25, 0.25, 0.5)
     love.graphics.rectangle("fill", 0,0, 1280,720)
     love.graphics.setColor(1, 1, 1)

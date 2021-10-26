@@ -20,9 +20,9 @@ local style = {
 
 function love.load()
     math.randomseed((os.time()))
-    gooi.setStyle(style)
-    gooi.desktopMode()
+
     Resources.Load()
+    gooi.setStyle(style)
     state_machine:push(GameStates.MainMenu)
 end
 

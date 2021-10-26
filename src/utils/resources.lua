@@ -113,13 +113,11 @@ Resources = {
 
     Load = function()
         if lf.getInfo(file_name) then
-            print('cool')
             local info, message = json.decode(lf.read(file_name))
             if message == nil then
                 save_data = info
             else print("Load Error: " .. message) end
         else
-            print('oops')
             save_data = default_save_data
             Resources.Save()
         end
