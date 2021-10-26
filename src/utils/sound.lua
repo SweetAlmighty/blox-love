@@ -1,10 +1,5 @@
 Sound = Object:extend()
 
-Sound.sfxVolume = 0.5
-Sound.sfxMute = false
-Sound.musicVolume = 0.5
-Sound.musicMute = false
-
 local newSource = love.audio.newSource
 
 function Sound:new(filename, type)
