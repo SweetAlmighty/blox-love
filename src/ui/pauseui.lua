@@ -5,32 +5,37 @@ local center = {
 
 PauseUI = Object:extend()
 
+local function musicIcon()
+    return "data/images/" .. (Sound.musicMute and "musicOff" or "musicOn") .. ".png"
+end
+
+local function sfxIcon()
+    return "data/images/" .. (Sound.sfxMute and "audioOff" or "audioOn") .. ".png"
+end
+
 local function createMusicButton(self)
-    local btn = gooi.newButton({text = ""})
-    :setIcon("data/images/musicOn.png")
+    local btn = gooi.newButton({text = ""}):setIcon(musicIcon())
     btn:onRelease(function()
+        Sound.musicMute = not Sound.musicMute
+        Resources.SetAudioVolume()
         self._switch2:play()
-        self._musicMute = not self._musicMute
-        btn:setIcon("data/images/" .. (self._musicMute and "musicOff" or "musicOn") .. ".png")
+        btn:setIcon(musicIcon())
     end)
     return btn
 end
 
 local function createSFXButton(self)
-    local btn = gooi.newButton({text = ""})
-    :setIcon("data/images/audioOn.png")
+    local btn = gooi.newButton({text = ""}):setIcon(sfxIcon())
     btn:onRelease(function()
+        Sound.sfxMute = not Sound.sfxMute
+        Resources.SetAudioVolume()
         self._switch2:play()
-        self._sfxMute = not self._sfxMute
-        btn:setIcon("data/images/" .. (self._sfxMute and "audioOff" or "audioOn") .. ".png")
+        btn:setIcon(sfxIcon())
     end)
     return btn
 end
 
 function PauseUI:new(onReset, onSkip)
-    self._sfxMute = false
-    self._musicMute = false
-
     self._switch2 = Resources.LoadSFX('Switch sounds 2')
     self._switch13 = Resources.LoadSFX('Switch sounds 13')
 
@@ -42,11 +47,17 @@ function PauseUI:new(onReset, onSkip)
     :add(
         gooi.newLabel({text = "Pause"})
         :center(),
-        gooi.newSlider({value = 0.2})
-        :setOnValueUpdated(function(v) print(v) end),
+        gooi.newSlider({value = Sound.musicVolume})
+        :setOnValueUpdated(function(v)
+            Sound.musicVolume = v
+            Resources.SetAudioVolume()
+        end),
         createMusicButton(self),
-        gooi.newSlider({value = 0.4})
-        :setOnValueUpdated(function(v) print(v) end),
+        gooi.newSlider({value = Sound.sfxVolume})
+        :setOnValueUpdated(function(v)
+            Sound.sfxVolume = v
+            Resources.SetAudioVolume()
+        end),
         createSFXButton(self),
         gooi.newButton({text = ""})
         :setIcon("data/images/home.png")
@@ -65,6 +76,7 @@ function PauseUI:new(onReset, onSkip)
                     self._switch2:play()
                 end
             })
+            Resources.Save()
         end),
         gooi.newButton({text = ""})
         :setIcon("data/images/return.png")
@@ -83,6 +95,7 @@ function PauseUI:new(onReset, onSkip)
                     self._switch2:play()
                 end
             })
+            Resources.Save()
         end),
         gooi.newButton({text = ""})
         :setIcon("data/images/next.png")
@@ -101,6 +114,7 @@ function PauseUI:new(onReset, onSkip)
                     self._switch2:play()
                 end
             })
+            Resources.Save()
         end))
         :setOpaque(true)
         :setVisible(false)

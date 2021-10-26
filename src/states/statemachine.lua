@@ -2,7 +2,7 @@ require "src/states/state"
 require "src/states/gameplay"
 require "src/states/mainmenu"
 
-GameStates = { --[[SplashScreen = 1,]] MainMenu = 2, Gameplay = 3 }
+GameStates = { MainMenu = 2, Gameplay = 3 }
 
 StateMachine = Object:extend()
 
@@ -14,7 +14,6 @@ end
 
 function StateMachine:push(type)
     local state = nil
-    --if type == GameStates.SplashScreen then state = SplashScreen()
     if type == GameStates.MainMenu then state = MainMenu()
     elseif type == GameStates.Gameplay then state = Gameplay()
     end
