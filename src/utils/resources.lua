@@ -26,6 +26,17 @@ local music_path = "/data/audio/music/"
 local function sfx(name) return (sfx_path .. name .. audio_type) end
 local function music(name) return (music_path .. name .. audio_type) end
 
+local save_data = { }
+
+local file_name = "savedata.json"
+
+local default_save_data = {
+    sfxMute = false,
+    sfxVolume = 0.5,
+    musicMute = false,
+    musicVolume = 0.5,
+}
+
 lg.setDefaultFilter("nearest", "nearest")
 
 Resources = {
@@ -82,5 +93,42 @@ Resources = {
         end
         print("SFX Error: SFX at " .. path .. " could not be found.")
         return nil
+    end,
+
+    SetAudioVolume = function()
+        for k,v in pairs(audio) do
+            v:setVolume()
+        end
+    end,
+
+    Save = function()
+        save_data.sfxMute = Sound.sfxMute
+        save_data.sfxVolume = Sound.sfxVolume
+        save_data.musicMute = Sound.musicMute
+        save_data.musicVolume = Sound.musicVolume
+
+        local _, error = lf.write(file_name, json.encode(save_data))
+        if error then print("Save Error: " .. error) end
+    end,
+
+    Load = function()
+        if lf.getInfo(file_name) then
+            print('cool')
+            local info, message = json.decode(lf.read(file_name))
+            if message == nil then
+                save_data = info
+            else print("Load Error: " .. message) end
+        else
+            print('oops')
+            save_data = default_save_data
+            Resources.Save()
+        end
+
+        Sound.sfxMute = save_data.sfxMute
+        Sound.sfxVolume = save_data.sfxVolume
+        Sound.musicMute = save_data.musicMute
+        Sound.musicVolume = save_data.musicVolume
+
+        Resources.SetAudioVolume()
     end
 }
