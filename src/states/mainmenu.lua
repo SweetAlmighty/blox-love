@@ -1,23 +1,28 @@
+require "src/ui/ui"
+
 MainMenu = State:extend()
+
+local onPlayRelease = function()
+    state_machine:push(GameStates.Gameplay)
+end
+
+local onExitRelease = function()
+    UI.createModal("Exit Blox?",
+        function()
+            Resources.Save()
+            love.event.quit()
+        end)
+end
 
 function MainMenu:new()
     MainMenu.super.new(self)
-  	self._layout = gooi.newPanel({x = 0, y = 0, w = 1280, h = 720, layout = "grid 5x3"})
-  	self._layout:add(gooi.newLabel({text = "BLOX"}):center(), "1,2")
-  	self._layout:add(gooi.newButton({text = "PLAY", y = 100}):center()
-  		:onRelease(function()
-            state_machine:push(GameStates.Gameplay)
-        end), "3,2")
-  	self._layout:add(gooi.newButton({text = "EXIT", y = 200}):center()
-  		:onRelease(function()
-            Resources.Save()
-            love.event.quit()
-        end), "4,2")
+    self._layout = UI.createPanel("BLOX", {x = 0, y = 0, w = 1280, h = 720}, "grid", 5, 3)
+    self._layout:add(UI.createButton("PLAY", nil, onPlayRelease), "3,2")
+    self._layout:add(UI.createButton("EXIT", nil, onExitRelease), "4,2")
 end
 
 function MainMenu:input(key) end
 function MainMenu:update(dt) end
 function MainMenu:enter() self._layout:setVisible(true) end
 function MainMenu:pause() self._layout:setVisible(false) end
-function MainMenu:draw() love.graphics.setColor(1, 1, 1) end
 function MainMenu:unpause() self._layout:setVisible(true) end

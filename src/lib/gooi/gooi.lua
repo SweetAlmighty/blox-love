@@ -434,10 +434,11 @@ function gooi.draw(group)
     love.graphics.setFont(gooi.getFont(self))-- Specific or a common font.
     local w, h = gooi.canvas:getWidth(), gooi.canvas:getHeight()
 
-    love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.rectangle("fill", 0, 0,
-      love.graphics.getWidth(),
-      love.graphics.getHeight())
+    -- Background for modal
+    --love.graphics.setColor(0, 0, 0, 0.5)
+    --love.graphics.rectangle("fill", 0, 0,
+    --  love.graphics.getWidth(),
+    --  love.graphics.getHeight())
 
     love.graphics.setColor(component.style.bgColor)
     love.graphics.rectangle("fill",
