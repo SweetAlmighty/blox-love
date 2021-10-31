@@ -21,7 +21,7 @@ component.style = {
   radius = 2, -- raw pixels
   innerRadius = 2, -- raw pixels
   showBorder = true, -- border for components
-  borderColor = component.colors.blue,
+  borderColor = component.colors.black,
   borderWidth = love.window.toPixels(2), -- in pixels
   borderStyle = "smooth", -- or "smooth"
   font = love.graphics.newFont(love.window.toPixels(13)),
@@ -319,7 +319,7 @@ function component:draw()-- Every component has the same base:
 
     -- Border:
     if style.showBorder then
-      love.graphics.setColor(newColor)
+      love.graphics.setColor(style.borderColor)
       
       if not self.enabled then
         love.graphics.setColor(1/4, 1/4, 1/4)

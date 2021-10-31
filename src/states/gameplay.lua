@@ -1,72 +1,74 @@
 require "src/ui/gameui"
-require "src/ui/pauseui"
 require "src/board/board"
 
 Gameplay = State:extend()
 
 local gameui = nil
-local pauseui = nil
 local paused = false
 
-local function TogglePause()
+local function togglePause()
     paused = not paused
-    pauseui:setVisible(paused)
+end
+
+local function resetBoard(self)
+    togglePause()
+    self._board:reset()
+    gameui:resetClicked()
+end
+
+local function onGridComplete(self)
+    paused = not paused
+    self._win:play()
+    gooi.alert({
+        okText = "Next",
+        text = "Success!",
+        ok = function()
+            resetBoard(self)
+        end
+    })
 end
 
 function Gameplay:new()
-    Gameplay.super.new(self)
     self._board = Board()
 
-    local function reset()
-        TogglePause()
-        self._board:reset()
-        gameui:resetClicked()
-    end
+    gameui = GameUI(function()
+        if paused then state_machine:pop() else
+            state_machine:push(GameStates.Pause)
+        end
+    end)
 
     self._board:setOnGridComplete(function()
-        paused = not paused
-        self._win:play()
-        gooi.alert({
-            text = "Success!",
-            ok = reset
-        })
+        onGridComplete(self)
     end)
 
     self._win = Resources.LoadSFX('Win sound 6')
     self._music = Resources.LoadMusic('Casual - Level 2 (Loop_01)')
-
-    gameui = GameUI(TogglePause)
-    pauseui = PauseUI(reset, reset)
 end
 
 function Gameplay:enter()
-    Gameplay.super.enter(self)
     gameui:setVisible(true)
     self._music:play_looping()
 end
 
 function Gameplay:exit()
-    Gameplay.super.exit(self)
-    paused = false
     self._music:stop()
     gameui:setVisible(false)
-    pauseui:setVisible(false)
 end
-
-function Gameplay:input(key) end
 
 function Gameplay:draw()
+    Gameplay.super.draw()
     self._board:draw()
-    if paused then
-        pauseui:draw()
-    end
 end
 
-function Gameplay:resize() self._board:resize() end
+function Gameplay:pause() paused = true end
+
+function Gameplay:unpause() paused = false end
 
 function Gameplay:update(dt)
     if not paused then self._board:update(dt) end
 end
+
+function Gameplay:resize() self._board:resize() end
 
 function Gameplay:mousemoved(x, y, dx, dy, istouch)
     if not paused then self._board:mouse_moved(dx, dy) end
