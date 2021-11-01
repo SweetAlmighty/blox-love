@@ -19,13 +19,9 @@ end
 local function onGridComplete(self)
     paused = not paused
     self._win:play()
-    gooi.alert({
-        okText = "Next",
-        text = "Success!",
-        ok = function()
-            resetBoard(self)
-        end
-    })
+    UI.createModal("SUCCESS!", "alert", function()
+        resetBoard(self)
+    end)
 end
 
 function Gameplay:new()
