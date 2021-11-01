@@ -82,6 +82,8 @@ function love.run()
 
         if love.graphics and love.graphics.isActive() then
             love.graphics.origin()
+
+            -- Commented out so that pause state can show previous state
             --love.graphics.clear(love.graphics.getBackgroundColor())
 
             if love.draw then love.draw() end

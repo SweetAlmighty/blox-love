@@ -2,16 +2,17 @@ require "src/ui/ui"
 
 MainMenu = State:extend()
 
-local onPlayRelease = function()
+local function onExit()
+    Resources.Save()
+    love.event.quit()
+end
+
+local function onPlayRelease()
     state_machine:push(GameStates.Gameplay)
 end
 
-local onExitRelease = function()
-    UI.createModal("Exit Blox?",
-        function()
-            Resources.Save()
-            love.event.quit()
-        end)
+local function onExitRelease()
+    UI.createModal("Exit Blox?", "modal", onExit)
 end
 
 function MainMenu:new()

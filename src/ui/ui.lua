@@ -39,20 +39,57 @@ UI = {
 		            end)
 	end,
 
-	createModal = function(text, ok)
+	createModal = function(text, style, ok)
+		local w = love.graphics.getWidth()
+		local h = love.graphics.getHeight()
+
+		local smaller = w < h and w or h
+
+	    local _w = smaller / 2
+	    local _h = _w * 0.6
+
 	    buttonPress:play()
-	    gooi.confirm({
-	        text = text,
-	        okText = 'Y',
-	        cancelText = 'N',
-	        ok = function()
-	        	buttonPress:play()
-	        	ok()
-	        end,
-	        cancel = function()
-	        	buttonPress:play()
-	        end
-	    })
+	    gooi.panelDialog = UI.createPanel("", {
+		    x = w / 2 - _w / 2 / 1,
+			y = h / 2 - _h / 2 / 1,
+			w = math.floor(_w),
+			h = math.floor(_h)
+		}, "grid", 3, 3):setOpaque(true):warning()
+
+    	local cancel = function()
+    		buttonPress:play()
+    		gooi.showingDialog = false
+    		gooi.removeComponent(gooi.panelDialog)
+    	end
+
+    	local continue = function()
+    		cancel()
+    		if ok ~= nil then ok() end
+    	end
+
+    	local cross = function() return "cross" end
+    	local checkmark = function() return "checkmark" end
+
+    	gooi.lblDialog = gooi.newLabel({ text = text }):center()
+    	gooi.lblDialog.lblFlag = true
+	    gooi.panelDialog:add(gooi.lblDialog, "2,2")
+
+    	if style == "modal" then
+	    	gooi.yesButton = UI.createButton("", checkmark, continue):warning()
+	      	gooi.yesButton.yesFlag = true
+		    gooi.panelDialog:add(gooi.yesButton, "3,3")
+
+	    	gooi.noButton = UI.createButton("", cross, cancel):warning()
+	      	gooi.noButton.noFlag = true
+		    gooi.panelDialog:add(gooi.noButton, "3,1")
+    	else
+			gooi.okButton = UI.createButton("", checkmark, continue):warning()
+			gooi.okButton.okFlag = true
+		    gooi.panelDialog:add(gooi.okButton, "3,2")
+
+    	end
+
+	    gooi.showingDialog = true
 	end,
 
 	createPanel = function(title, info, type, width, height)
@@ -64,13 +101,5 @@ UI = {
 		panel:add(gooi.newLabel({text = title}):center())
 
 		return panel
-	end,
-
-	createAlert = function(title, text, ok)
-	    gooi.alert({
-	        ok = ok,
-	        text = title,
-	        okText = text
-	    })
 	end
 }

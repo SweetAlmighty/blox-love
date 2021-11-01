@@ -36,38 +36,38 @@ end
 
 function PauseUI:new(onReset, onSkip)
     local function onHomeRelease()
-        UI.createModal("Return Home?", function()
-            self._layout:setVisible(false)
+        UI.createModal("Return Home?", "modal", function()
+            self._panel:setVisible(false)
             state_machine:clear()
         end)
     end
 
     local function onResetRelease()
-        UI.createModal("Reset blocks?", function()
-            self._layout:setVisible(false)
+        UI.createModal("Reset blocks?", "modal", function()
+            self._panel:setVisible(false)
             onReset()
         end)
     end
 
     local function onSkipRelease()
-        UI.createModal("Skip?", function()
-            self._layout:setVisible(false)
+        UI.createModal("Skip?", "modal", function()
+            self._panel:setVisible(false)
             onSkip()
         end)
     end
 
-    self._layout = UI.createPanel("PAUSE", {
+    self._panel = UI.createPanel("PAUSE", {
         x = (love.graphics.getWidth()/2) - 200,
         y = (love.graphics.getHeight()/2) - 200,
         w = 400,
         h = 400
     }, "grid", 4, 3)
 
-    self._layout:setColspan(1, 1, 3)
+    self._panel:setColspan(1, 1, 3)
                 :setColspan(2, 1, 2)
                 :setColspan(3, 1, 2)
 
-    self._layout:add(
+    self._panel:add(
         UI.createSlider(Sound.musicVolume, updateMusicSlider),
         UI.createButton("", musicIcon, updateMusicMute),
         UI.createSlider(Sound.SfxVolume, updateSfxSlider),
@@ -79,5 +79,5 @@ function PauseUI:new(onReset, onSkip)
 end
 
 function PauseUI:setVisible(visible)
-    self._layout:setVisible(visible)
+    self._panel:setVisible(visible)
 end

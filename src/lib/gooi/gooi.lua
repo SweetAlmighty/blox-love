@@ -440,6 +440,8 @@ function gooi.draw(group)
     --  love.graphics.getWidth(),
     --  love.graphics.getHeight())
 
+    -- Disabling to allow for different color modals
+    --[[
     love.graphics.setColor(component.style.bgColor)
     love.graphics.rectangle("fill",
       gooi.panelDialog.x,
@@ -460,6 +462,7 @@ function gooi.draw(group)
         gooi.radCorner
       )
     end
+    ]]
 
     msgLbl:draw()
     msgLbl:drawSpecifics(msgLbl.style.fgColor)
