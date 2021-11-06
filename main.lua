@@ -11,7 +11,7 @@ require "src/ui/ui"
 state_machine = StateMachine()
 
 function love.load()
-    math.randomseed((os.time()))
+    math.randomseed(os.time() + tonumber(tostring({}):sub(8)))
 
     Resources.Load()
     UI.setStartStyle()

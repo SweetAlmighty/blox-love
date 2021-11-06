@@ -1,9 +1,9 @@
 require "src/states/state"
-require "src/states/pause"
+require "src/states/settings"
 require "src/states/gameplay"
 require "src/states/mainmenu"
 
-GameStates = { MainMenu = 2, Gameplay = 3, Pause = 4 }
+GameStates = { MainMenu = 2, Gameplay = 3, Settings = 4 }
 
 StateMachine = Object:extend()
 
@@ -27,7 +27,7 @@ end
 
 function StateMachine:push(type)
     local state = nil
-    if type == GameStates.Pause then state = Pause()
+    if type == GameStates.Settings then state = Settings()
     elseif type == GameStates.MainMenu then state = MainMenu()
     elseif type == GameStates.Gameplay then state = Gameplay()
     end

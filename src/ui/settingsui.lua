@@ -1,6 +1,6 @@
 require "src/ui/ui"
 
-PauseUI = Object:extend()
+SettingsUI = Object:extend()
 
 local function homeIcon() return "home" end
 local function returnIcon() return "return" end
@@ -34,7 +34,7 @@ local function updateSfxMute()
     Resources.SetAudioVolume()
 end
 
-function PauseUI:new(onReset, onSkip)
+function SettingsUI:new(onReset, onSkip)
     local function onHomeRelease()
         UI.createModal("Return Home?", "modal", function()
             self._panel:setVisible(false)
@@ -45,18 +45,20 @@ function PauseUI:new(onReset, onSkip)
     local function onResetRelease()
         UI.createModal("Reset blocks?", "modal", function()
             self._panel:setVisible(false)
-            onReset()
+            if Gameplay.onReset ~= nil then Gameplay.onReset() end -- hack :(
+            state_machine:pop()
         end)
     end
 
     local function onSkipRelease()
         UI.createModal("Skip?", "modal", function()
             self._panel:setVisible(false)
-            onSkip()
+            if Gameplay.onSkip ~= nil then Gameplay.onSkip() end -- hack :(
+            state_machine:pop()
         end)
     end
 
-    self._panel = UI.createPanel("PAUSE", {
+    self._panel = UI.createPanel("SETTINGS", {
         x = (love.graphics.getWidth()/2) - 200,
         y = (love.graphics.getHeight()/2) - 200,
         w = 400,
@@ -78,6 +80,6 @@ function PauseUI:new(onReset, onSkip)
     ):setOpaque(true):setVisible(false)
 end
 
-function PauseUI:setVisible(visible)
+function SettingsUI:setVisible(visible)
     self._panel:setVisible(visible)
 end
