@@ -3,38 +3,19 @@ require "src/board/board"
 
 Gameplay = State:extend()
 
-local gameui = nil
-local paused = false
-
-local function togglePause()
-    paused = not paused
-end
-
-local function resetBoard(self)
-    togglePause()
-    self._board:reset()
-    gameui:resetClicked()
-end
-
-local function onGridComplete(self)
-    paused = not paused
-    self._win:play()
-    UI.createModal("SUCCESS!", "alert", function()
-        resetBoard(self)
-    end)
+function Gameplay:_onSettingsClicked()
+    if self._paused then state_machine:pop() else
+        state_machine:push(GameStates.Settings)
+    end
 end
 
 function Gameplay:new()
-    self._board = Board()
-
-    gameui = GameUI(function()
-        if paused then state_machine:pop() else
-            state_machine:push(GameStates.Pause)
-        end
+    self._paused = false
+    self._board = Board(function()
+        self:_onGridComplete()
     end)
-
-    self._board:setOnGridComplete(function()
-        onGridComplete(self)
+    self._gameui = GameUI(function()
+        self:_onSettingsClicked()
     end)
 
     self._win = Resources.LoadSFX('Win sound 6')
@@ -42,13 +23,13 @@ function Gameplay:new()
 end
 
 function Gameplay:enter()
-    gameui:setVisible(true)
+    self._gameui:setVisible(true)
     self._music:play_looping()
 end
 
 function Gameplay:exit()
     self._music:stop()
-    gameui:setVisible(false)
+    self._gameui:setVisible(false)
 end
 
 function Gameplay:draw()
@@ -56,24 +37,46 @@ function Gameplay:draw()
     self._board:draw()
 end
 
-function Gameplay:pause() paused = true end
+function Gameplay:_resetBoard()
+    self._paused = false
+    self._board:reset()
+    self._gameui:resetClicked()
+end
 
-function Gameplay:unpause() paused = false end
+function Gameplay:_onGridComplete()
+    self._paused = true
+    self._win:play()
+    UI.createModal("SUCCESS!", "alert", function()
+        self:_resetBoard()
+    end)
+end
+
+function Gameplay:pause()
+    self._paused = true
+    Gameplay.onSkip = function() self:_resetBoard() end
+    Gameplay.onReset = function() self:_resetBoard() end
+end
+
+function Gameplay:unpause()
+    self._paused = false
+    Gameplay.onSkip = nil
+    Gameplay.onReset = nil
+end
 
 function Gameplay:update(dt)
-    if not paused then self._board:update(dt) end
+    if not self._paused then self._board:update(dt) end
 end
 
 function Gameplay:resize() self._board:resize() end
 
 function Gameplay:mousemoved(x, y, dx, dy, istouch)
-    if not paused then self._board:mouse_moved(dx, dy) end
+    if not self._paused then self._board:mouse_moved(dx, dy) end
 end
 
 function Gameplay:mousepressed(x, y, button, istouch, presses)
-    if not paused then self._board:mouse_pressed(x, y) end
+    if not self._paused then self._board:mouse_pressed(x, y) end
 end
 
 function Gameplay:mousereleased(x, y, button, istouch, presses)
-    if not paused then self._board:mouse_released() end
+    if not self._paused then self._board:mouse_released() end
 end
