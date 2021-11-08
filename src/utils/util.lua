@@ -15,12 +15,12 @@ function shuffle(list)
 end
 
 function find_index(table, entry)
-    for i = 1, #table, 1 do if table[i] == entry then return i end end
+    for i = 1, #table do if table[i] == entry then return i end end
     return nil
 end
 
 function wipe(table)
-    for i = 1, #table, 1 do table[i] = nil end
+    for i = 1, #table do table[i] = nil end
 end
 
 function move(tbl, new, old)

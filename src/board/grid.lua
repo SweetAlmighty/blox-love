@@ -24,16 +24,16 @@ function Grid:new(center)
 end
 
 function Grid:initialize()
-    for i = 1, self._columns, 1 do
+    for i = 1, self._columns do
         local row = {}
-        for j = 1, self._rows, 1 do
+        for j = 1, self._rows do
             row[#row + 1] = nil
         end
         self._blocks[#self._blocks + 1] = row
     end
 
-    for i = 1, self._columns, 1 do
-        for j = 1, self._rows, 1 do
+    for i = 1, self._columns do
+        for j = 1, self._rows do
             local block = self._internal_grid:get_block(i, j)
             if block._status ~= -1 then
                 self._blocks[i][j] = GridBlock(block:column(), block:row(), self._start)
@@ -51,8 +51,8 @@ function Grid:get_shapes()
 end
 
 function Grid:draw()
-    for i = 1, #self._blocks, 1 do
-        for j = 1, #self._blocks[i], 1 do
+    for i = 1, #self._blocks do
+        for j = 1, #self._blocks[i] do
             if self._blocks[i][j] ~= null then
                 self._blocks[i][j]:draw()
             end
@@ -61,8 +61,8 @@ function Grid:draw()
 end
 
 function Grid:is_complete()
-    for i = 1, #self._blocks, 1 do
-        for j = 1, #self._blocks[i], 1 do
+    for i = 1, #self._blocks do
+        for j = 1, #self._blocks[i] do
             if self._blocks[i][j] ~= null then
                 if not self._blocks[i][j]:is_occupied() then
                     return false

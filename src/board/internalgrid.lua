@@ -8,7 +8,7 @@ local function find_next(self, blocks)
 
     for i = #blocks, 1, -1 do
         neighbors = shuffle(blocks[i]:get_neighbors())
-        for j = 1, #neighbors, 1 do
+        for j = 1, #neighbors do
             next_block = self._blocks[neighbors[j].column][neighbors[j].row]
             if next_block._status == 0 then
                 wipe(neighbors)
@@ -27,9 +27,9 @@ function InternalGrid:new(columns, rows)
     self._gap_count = 0
     self._columns = columns
 
-    for i = 1, columns, 1 do
+    for i = 1, columns do
         local row = {}
-        for j = 1, rows, 1 do
+        for j = 1, rows do
             row[#row + 1] = InternalBlock(i, j)
             row[#row]:init_neighbors(columns, rows)
         end
@@ -63,13 +63,13 @@ function InternalGrid:create_gaps()
 
         -- Create symmetrical gaps
         if love.math.random() > 0.5 then
-            for i = 1, #gap, 1 do
+            for i = 1, #gap do
                 -- Adding 1 to Rows and Columns since lua indices start at 1
                 points[#points + 1] = Coordinate((self._columns + 1) - gap[i]:column(), (self._rows + 1) - gap[i]:row())
             end
         end
 
-        for i = 1, #points, 1 do
+        for i = 1, #points do
             self._gap_count = self._gap_count + 1
             self._blocks[points[i].column][points[i].row]:disable()
         end
@@ -84,8 +84,8 @@ function InternalGrid:create_shapes()
     self._shapes = {}
 
     local grid_points = {}
-    for i = 1, self._columns, 1 do
-        for j = 1, self._rows, 1 do
+    for i = 1, self._columns do
+        for j = 1, self._rows do
             grid_points[#grid_points + 1] = Coordinate(i, j)
         end
     end
@@ -93,11 +93,11 @@ function InternalGrid:create_shapes()
 
     local shapes = {}
     while amount < #grid_points - self._gap_count do
-        for i = 1, #grid_points, 1 do
+        for i = 1, #grid_points do
             local shape = {}
             local block = self._blocks[grid_points[i].column][grid_points[i].row]
             if block._status == 0 then
-                for j = 1, 5, 1 do
+                for j = 1, 5 do
                     if block ~= nil and block._status == 0 then
                         block._status = #shapes + 1
                         shape[#shape + 1] = block

@@ -88,7 +88,7 @@ function Board:mouse_moved(dx, dy)
 end
 
 function Board:mouse_pressed(x, y)
-    for i = 1, #self._shapes, 1 do
+    for i = 1, #self._shapes do
         if self._shapes[i]:selected(x, y) then
             select_shape(self, self._shapes[i])
             move(self._shapes, 1, i)

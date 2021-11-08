@@ -24,7 +24,7 @@ function ShapeBlock:set_pos(position)
 end
 
 function ShapeBlock:unsnap()
-    for i = 1, #self._collisions, 1 do
+    for i = 1, #self._collisions do
         self._collisions[i]:set_occupied(false)
     end
 end

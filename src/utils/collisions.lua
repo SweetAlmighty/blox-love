@@ -15,7 +15,7 @@ local function handle_collisions(block, collisions)
     local block_collisions = block:get_collisions()
 
     -- Process new collisions
-    for i=1, #collisions, 1 do
+    for i=1, #collisions do
         local index = find_index(block_collisions, collisions[i])
         if index == nil then
             -- Enter
@@ -25,7 +25,7 @@ local function handle_collisions(block, collisions)
     end
 
     -- Find collisions to remove
-    for i=1, #block_collisions, 1 do
+    for i=1, #block_collisions do
         local index = find_index(collisions, block_collisions[i])
         if index == nil then
             remove[#remove+1] = block_collisions[i]
@@ -33,7 +33,7 @@ local function handle_collisions(block, collisions)
     end
 
     -- Process collisions that are no longer valid
-    for i=1, #remove, 1 do
+    for i=1, #remove do
         -- Exit
         remove[i]:collision_exit(block)
         block:collision_exit(remove[i])
@@ -43,8 +43,8 @@ local function handle_collisions(block, collisions)
 end
 
 function check_collisions(blocks)
-    for i=1, #blocks, 1 do
-        for j=1, #blocks, 1 do
+    for i=1, #blocks do
+        for j=1, #blocks do
             if i ~= j and (blocks[i]._type ~= blocks[j]._type) then
                 if check_collision(blocks[i], blocks[j]) then
                     collisions[#collisions+1] = blocks[j]
