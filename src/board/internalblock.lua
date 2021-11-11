@@ -7,13 +7,9 @@ function InternalBlock:new(column, row)
     self._neighbors = {}
 end
 
-function InternalBlock:disable()
-    self._status = -1
-end
+function InternalBlock:disable() self._status = -1 end
 
-function InternalBlock:get_neighbors()
-    return self._neighbors
-end
+function InternalBlock:get_neighbors() return self._neighbors end
 
 function InternalBlock:init_neighbors(columns, rows)
     if self:column() - 1 >= 1 then

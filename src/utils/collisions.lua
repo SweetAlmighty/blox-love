@@ -2,8 +2,8 @@ local remove = { }
 local collisions = { }
 
 local function check_collision(a, b)
-    local one = a:get_position()
-    local two = b:get_position()
+    local one = a:get_translation()
+    local two = b:get_translation()
 
     return one.x < two.x + Block.width and
            two.x < one.x + Block.width and
@@ -15,45 +15,42 @@ local function handle_collisions(block, collisions)
     local block_collisions = block:get_collisions()
 
     -- Process new collisions
-    for i=1, #collisions do
-        local index = find_index(block_collisions, collisions[i])
-        if index == nil then
+    foreach(collisions, function(i, v)
+        if find_index(block_collisions, v) == nil then
             -- Enter
-            collisions[i]:collision_enter(block)
-            block:collision_enter(collisions[i])
+            v:collision_enter(block)
+            block:collision_enter(v)
         end
-    end
+    end)
 
     -- Find collisions to remove
-    for i=1, #block_collisions do
-        local index = find_index(collisions, block_collisions[i])
-        if index == nil then
-            remove[#remove+1] = block_collisions[i]
+    foreach(block_collisions, function(i, v)
+        if find_index(collisions, v) == nil then
+            remove[#remove+1] = v
         end
-    end
+    end)
 
     -- Process collisions that are no longer valid
-    for i=1, #remove do
-        -- Exit
-        remove[i]:collision_exit(block)
-        block:collision_exit(remove[i])
-    end
+    foreach(remove, function(i, v)
+        v:collision_exit(block)
+        block:collision_exit(v)
+    end)
 
     wipe(remove)
 end
 
 function check_collisions(blocks)
-    for i=1, #blocks do
-        for j=1, #blocks do
-            if i ~= j and (blocks[i]._type ~= blocks[j]._type) then
-                if check_collision(blocks[i], blocks[j]) then
-                    collisions[#collisions+1] = blocks[j]
+    foreach(blocks, function(i, v)
+        foreach(blocks, function(j, w)
+            if i ~= j and (v._type ~= w._type) then
+                if check_collision(v, w) then
+                    collisions[#collisions+1] = w
                 end
             end
-        end
+        end)
 
-        handle_collisions(blocks[i], collisions)
+        handle_collisions(v, collisions)
 
         wipe(collisions)
-    end
+    end)
 end

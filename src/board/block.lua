@@ -7,6 +7,8 @@ Block.texture = Resources.LoadImage('block')
 Block.width = Block.texture:getWidth()
 Block.height = Block.texture:getHeight()
 
+function Block:coords() return self._coordinates end
+
 function Block:row() return self._coordinates.row end
 
 function Block:column() return self._coordinates.column end

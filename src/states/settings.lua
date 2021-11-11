@@ -14,5 +14,5 @@ function Settings:pause() end
 function Settings:unpause() end
 function Settings:input(key) end
 function Settings:update(dt) end
-function Settings:exit() self.ui:setVisible(false) end
 function Settings:new() self.ui = SettingsUI() end
+function Settings:exit() self.ui:setVisible(false) end

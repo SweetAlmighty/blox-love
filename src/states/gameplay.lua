@@ -11,12 +11,8 @@ end
 
 function Gameplay:new()
     self._paused = false
-    self._board = Board(function()
-        self:_onGridComplete()
-    end)
-    self._gameui = GameUI(function()
-        self:_onSettingsClicked()
-    end)
+    self._board = Board(function() self:_onGridComplete() end)
+    self._gameui = GameUI(function() self:_onSettingsClicked() end)
 
     self._win = Resources.LoadSFX('Win sound 6')
     self._music = Resources.LoadMusic('Casual - Level 2 (Loop_01)')

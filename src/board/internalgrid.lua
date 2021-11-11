@@ -50,9 +50,6 @@ function InternalGrid:create_gaps()
         local gap = {self._blocks[column][row]}
         local points = {Coordinate(column, row)}
 
-        --gap[#gap + 1] = self._blocks[column][row]
-        --points[#points + 1] = Coordinate(column, row)
-
         while #gap < self._rows do
             local block = find_next(self, gap)
             if block ~= nil then
@@ -63,16 +60,16 @@ function InternalGrid:create_gaps()
 
         -- Create symmetrical gaps
         if love.math.random() > 0.5 then
-            for i = 1, #gap do
+            for _, block in ipairs(gap) do
                 -- Adding 1 to Rows and Columns since lua indices start at 1
-                points[#points + 1] = Coordinate((self._columns + 1) - gap[i]:column(), (self._rows + 1) - gap[i]:row())
+                points[#points + 1] = Coordinate((self._columns + 1) - block:column(), (self._rows + 1) - block:row())
             end
         end
 
-        for i = 1, #points do
+        foreach(points, function(i, v)
             self._gap_count = self._gap_count + 1
-            self._blocks[points[i].column][points[i].row]:disable()
-        end
+            self._blocks[v.column][v.row]:disable()
+        end)
 
         wipe(gap)
         wipe(points)
@@ -93,9 +90,9 @@ function InternalGrid:create_shapes()
 
     local shapes = {}
     while amount < #grid_points - self._gap_count do
-        for i = 1, #grid_points do
+        foreach(grid_points, function(i, v)
             local shape = {}
-            local block = self._blocks[grid_points[i].column][grid_points[i].row]
+            local block = self._blocks[v.column][v.row]
             if block._status == 0 then
                 for j = 1, 5 do
                     if block ~= nil and block._status == 0 then
@@ -108,11 +105,9 @@ function InternalGrid:create_shapes()
                 self._shapes[#self._shapes + 1] = shape
                 amount = amount + #shape
             end
-        end
+        end)
     end
     wipe(grid_points)
 end
 
-function InternalGrid:get_block(column, row)
-    return self._blocks[column][row]
-end
+function InternalGrid:get_block(column, row) return self._blocks[column][row] end

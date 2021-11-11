@@ -1,8 +1,8 @@
 Color = Object:extend()
 
-local load = Resources.LoadData("colors")
-
 Color.colors = {}
+
+local load = Resources.LoadData("colors")
 
 function Color:new(r, g, b)
     self.r = r
@@ -10,6 +10,10 @@ function Color:new(r, g, b)
     self.b = b
 end
 
-for i = 1, #load do
-    Color.colors[#Color.colors + 1] = Color(load[i].r / 255, load[i].g / 255, load[i].b / 255)
+foreach(load, function(i, v)
+    Color.colors[#Color.colors + 1] = Color(v.r / 255, v.g / 255, v.b / 255)
+end)
+
+function Color.__tostring(c)
+    return "Color(" .. c.r .. ", " .. c.g.. ", " .. c.b.. ")"
 end

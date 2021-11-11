@@ -27,7 +27,8 @@ function GameUI:new(onSettingsClicked)
 end
 
 function GameUI:resetClicked()
-    setIcon(self, false)
+    self._clicked = false
+    setIcon(self)
 end
 
 function GameUI:setVisible(visible)
