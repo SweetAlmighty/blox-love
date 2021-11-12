@@ -37,6 +37,8 @@ local default_save_data = {
     musicVolume = 0.5,
 }
 
+lf.setIdentity("blox-love")
+
 lg.setDefaultFilter("nearest", "nearest")
 
 Resources = {
@@ -48,7 +50,6 @@ Resources = {
             return images[name]
         end
         print("Image Error: Image at " .. path .. " could not be found.")
-        return nil
     end,
 
     LoadFont = function(name, size)
@@ -59,7 +60,6 @@ Resources = {
             return fonts[name]
         end
         print("Font Error: Font at " .. path .. " could not be found.")
-        return nil
     end,
 
     LoadData = function(name)
@@ -70,7 +70,6 @@ Resources = {
             return data[name]
         end
         print("Data Error: DAta at " .. path .. " could not be found.")
-        return nil
     end,
 
     LoadMusic = function(name)
@@ -81,7 +80,6 @@ Resources = {
             return audio[name]
         end
         print("Music Error: Music at " .. path .. " could not be found.")
-        return nil
     end,
 
     LoadSFX = function(name)
@@ -92,13 +90,10 @@ Resources = {
             return audio[name]
         end
         print("SFX Error: SFX at " .. path .. " could not be found.")
-        return nil
     end,
 
     SetAudioVolume = function()
-        for k,v in pairs(audio) do
-            v:setVolume()
-        end
+        for _, v in pairs(audio) do v:setVolume() end
     end,
 
     Save = function()
@@ -119,7 +114,9 @@ Resources = {
             else print("Load Error: " .. message) end
         else
             save_data = default_save_data
-            Resources.Save()
+            
+            local _, error = lf.write(file_name, json.encode(save_data))
+            if error then print("Save Error: " .. error) end
         end
 
         Sound.sfxMute = save_data.sfxMute
