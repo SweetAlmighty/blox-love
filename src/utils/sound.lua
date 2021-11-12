@@ -15,6 +15,7 @@ function Sound:setVolume()
     else
         volume = Sound.musicMute and 0 or Sound.musicVolume
     end
+
     if self._source ~= nil then
         self._source:setVolume(volume)
     end
