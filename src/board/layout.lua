@@ -26,7 +26,7 @@ function Layout:draw()
     lg.setColor(0.1, 0.1, 0.1)
     lg.rectangle("fill", self.grid:get())
     lg.rectangle("fill", self.side:get())
-    love.graphics.setColor(1, 1, 1)
+    lg.setColor(1, 1, 1)
 end
 
 function Layout:resize()
