@@ -69,7 +69,7 @@ Resources = {
             data[name] = json.decode(lf.read(path))
             return data[name]
         end
-        print("Data Error: DAta at " .. path .. " could not be found.")
+        print("Data Error: Data at " .. path .. " could not be found.")
     end,
 
     LoadMusic = function(name)
