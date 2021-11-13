@@ -10,20 +10,28 @@ local function select_shape(self, shape)
     self._shape_interaction:play()
     self._selected_shape = shape
     self._selected_shape:unsnap()
-    self._selected_shape:move(0, -100)
 end
 
 local function deselect_shape(self)
     self._shape_interaction:play()
-    self._selected_shape:attempt_snap()
+
+    if self._selected_shape:attempt_snap() then
+        self._selected_shape:snap()
+    else
+        self._selected_shape:minimize()
+        local index = find_index(self._shapes, self._selected_shape)
+        self._selected_shape:move((self._rects[index] - self._shapes[index]:center()):split())
+    end
+
     self._selected_shape = nil
 end
 
-function Board:new()
+function Board:new(onGridComplete)
+    self._rects = {}
     self._shapes = {}
     self._layout = Layout()
+    self._onGridComplete = onGridComplete
     self._grid = Grid(self._layout:get_grid_center())
-
     self._shape_interaction = Resources.LoadSFX("Switch sounds 1")
 
     self:create_shapes()
@@ -33,20 +41,21 @@ end
 function Board:create_shapes()
     local shapes = self._grid:get_shapes()
 
-    local coord = nil
     local shape = {}
-    for i, v in pairs(shapes) do
+    local coord = nil
+    for i, v in ipairs(shapes) do
         shape = {}
-        for j, z in pairs(v) do
-            coord = z._coordinates
+        for j, z in ipairs(v) do
+            coord = z:coords()
             shape[#shape + 1] = ShapeBlock(coord.column, coord.row)
         end
         self._shapes[#self._shapes + 1] = Shape(shape)
     end
+
+    self._shapes = shuffle(self._shapes)
 end
 
 function Board:reset()
-    -- Reset grid here
     wipe(self._shapes)
     wipe(CollidableBlock.blocks)
 
@@ -57,12 +66,7 @@ function Board:reset()
     self._selected_shape = nil
 end
 
-function Board:setOnGridComplete(onGridComplete)
-    self._onGridComplete = onGridComplete
-end
-
 function Board:update(dt)
-    -- Needs to be a list containing all non-gap grid blocks and all shape blocks
     check_collisions(CollidableBlock.blocks)
     if self._grid:is_complete() then
         if self._onGridComplete then
@@ -76,8 +80,15 @@ end
 function Board:draw()
     self._layout:draw()
     self._grid:draw()
+
     for i = #self._shapes, 1, -1 do
-        self._shapes[i]:draw()
+        if self._shapes[i] ~= self._selected_shape then
+            self._shapes[i]:draw()
+        end
+    end
+
+    if self._selected_shape ~= nil then
+        self._selected_shape:draw()
     end
 end
 
@@ -88,10 +99,9 @@ function Board:mouse_moved(dx, dy)
 end
 
 function Board:mouse_pressed(x, y)
-    for i = 1, #self._shapes, 1 do
-        if self._shapes[i]:selected(x, y) then
-            select_shape(self, self._shapes[i])
-            move(self._shapes, 1, i)
+    for _, shape in ipairs(self._shapes) do
+        if shape:selected(x, y) then
+            select_shape(self, shape)
             return
         end
     end
@@ -104,21 +114,28 @@ function Board:mouse_released(x, y)
 end
 
 function Board:place_shapes()
-    local pos = nil
-    local randomized_shapes = shuffle(self._shapes)
-    local width, height = love.graphics.getDimensions()
+    local x, y, w, h = self._layout:get_side_rect()
 
-    for i = 1, #randomized_shapes, 1 do
-        local shape = randomized_shapes[i]
+    local columns = 2
+    local width = w / columns
+    local rows = math.ceil(#self._shapes / 2)
+    local height = math.ceil(h / rows)
 
-        pos = shape:get_block(1):get_position()
-        local dx = math.random(Block.width, width - Block.width) - pos.x
-        local dy = math.random(Block.height * 6, height - Block.height) - pos.y
+    local rect = {}
+    self._rects = {}
+    local size = Vector(width, height)
 
-        for j = 1, shape:block_count(), 1 do
-            pos = shape:get_block(j):get_position()
-            shape:get_block(j):set_position(pos.x + dx, pos.y + dy)
+    local _x, _y
+    for i = 1, columns do
+        for j = 1, rows do
+            _x = x + (width * (i - 1))
+            _y = y + (height * (j - 1))
+            self._rects[#self._rects + 1] = Vector(_x, _y) + (size / 2)
         end
+    end
+
+    for i, shape in ipairs(self._shapes) do
+        shape:move((self._rects[i] - shape:center()):split())
     end
 end
 

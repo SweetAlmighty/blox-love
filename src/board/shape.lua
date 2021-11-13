@@ -8,26 +8,24 @@ local function get_block(pos)
             return Grid.blocks[pos.column][pos.row]
         end
     end
-    return nil
 end
 
 local function set_grid_block_colors(self, snappable)
-    for i = 1, #self._snap_points, 1 do
-        self._snap_points[i]:set_base_color(snappable)
-    end
+    foreach(self._snap_points, function(i, v) v:set_color(snappable) end)
 end
 
 local function set_grid_blocks_occupied_state(self)
-    for i = 1, #self._snap_points, 1 do
-        self._snap_points[i]:set_occupied(self._snapped)
-    end
+    foreach(self._snap_points, function(i, v) v:occupied(self._snapped) end)
 end
 
-local function is_neighbor(lhs, rhs)
-    return lhs:column() - 1 == rhs:column() or
-    lhs:column() + 1 == rhs:column() or
-    lhs:row() - 1 == rhs:row() or
-    lhs:row() + 1 == rhs:row()
+local function valid_collisions(self)
+    local collisions = {}
+    foreach(self._blocks, function(i,v)
+        if #v:collisions() > 0 then
+            collisions[#collisions + 1] = true
+        end
+    end)
+    return #collisions == #self._blocks
 end
 
 local function determine_snap_points(self)
@@ -35,22 +33,12 @@ local function determine_snap_points(self)
 
     self._snap_points = {}
 
-    local count = 0
+    if valid_collisions(self) then
+        for _, snap_block in ipairs(self._blocks[1]:get_snap_blocks()) do
+            for _, block in ipairs(self._blocks) do
+                local next = get_block(snap_block:coords() + (block:coords() - self._blocks[1]:coords()))
 
-    for i = 1, #self._blocks, 1 do
-        if #self._blocks[i]:get_collisions() > 0 then
-            count = count + 1
-        end
-    end
-
-    if count == #self._blocks then
-        local potentialGridBlocks = self._blocks[1]:get_snap_blocks()
-        for i = 1, #potentialGridBlocks, 1 do
-            for j = 1, #self._blocks, 1 do
-                local pos = potentialGridBlocks[i]._coordinates + (self._blocks[j]._coordinates - self._blocks[1]._coordinates)
-                local next = get_block(pos)
-
-                if next == 'nil' or next == nil or next:is_occupied() then
+                if next == nil or next:occupied() then
                     self._snap_points = {}
                     break
                 end
@@ -58,13 +46,15 @@ local function determine_snap_points(self)
                 self._snap_points[#self._snap_points + 1] = next
             end
 
-            if #self._snap_points ~= 0 then
-                break
-            end
+            if #self._snap_points ~= 0 then break end
         end
     end
 
     set_grid_block_colors(self, true)
+end
+
+local function difference(self)
+    return (self._snap_points[1]:translation() - self._blocks[1]:translation()):split()
 end
 
 function Shape:new(blocks)
@@ -72,79 +62,100 @@ function Shape:new(blocks)
     self._blocks = blocks
     self._snap_points = {}
     self._color = Color.colors[color_index]
+    self._transform = love.math.newTransform()
+    self._sprite_batch = love.graphics.newSpriteBatch(Block.texture)
     color_index = color_index == #Color.colors and 1 or color_index + 1
 
-    for i = 1, #self._blocks, 1 do
-        self._blocks[i]:set_color(self._color)
-    end
+    self:minimize()
+
+    foreach(self._blocks, function(i,v)
+        local coords = v:coords() - blocks[1]:coords()
+        v:position(Vector(coords.column * Block.width, coords.row * Block.height))
+    end)
+
+    self:move(0, 0)
+
+    foreach(self._blocks, function(i,v) v:color(self._color) end)
 end
 
+function Shape:block_count() return #self._blocks end
+
+function Shape:get_block(index) return self._blocks[index] end
+
+function Shape:attempt_snap() return valid_collisions(self) end
+
 function Shape:draw()
-    for i = 1, #self._blocks, 1 do
-        self._blocks[i]:draw()
-    end
+    self._sprite_batch:clear()
+
+    self._sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
+    foreach(self._blocks, function(i, v)
+        local pos = v:translation()
+        self._sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
+    end)
+
+    love.graphics.draw(self._sprite_batch)
 end
 
 function Shape:move(dx, dy)
-    for i = 1, #self._blocks, 1 do
-        self._blocks[i]:move(dx, dy)
-    end
+    self._transform = self._transform:translate(dx/self._scale, dy/self._scale)
+
+    foreach(self._blocks, function(i, v)
+        v:set_translation(self._transform:transformPoint(v:position():split()))
+    end)
 
     determine_snap_points(self)
-end
-
-function Shape:get_block(index)
-    return self._blocks[index]
-end
-
-function Shape:block_count()
-    return #self._blocks
 end
 
 function Shape:snap()
     self._snapped = #self._snap_points == #self._blocks
 
     if self._snapped then
-        local dif = self._snap_points[1]:get_position() - self._blocks[1]:get_position()
-        for i = 1, #self._blocks, 1 do self._blocks[i]:move(dif.x, dif.y) end
-        for i = 1, #self._snap_points, 1 do self._snap_points[i]:set_occupied(true) end
+        self:move(difference(self))
+        foreach(self._snap_points, function(i, v) v:occupied(true) end)
     end
+
+    set_grid_blocks_occupied_state(self)
 end
 
 function Shape:unsnap()
     if self._snapped then
-        for i = 1, #self._blocks, 1 do self._blocks[i]:unsnap() end
-self._snapped = false
+        foreach(self._blocks, function(i,v) v:unsnap() end)
+        self._snapped = false
+    else
+        self:maximize()
     end
+end
+
+function Shape:maximize()
+    self._scale = 1
+    self._transform = self._transform:scale(self._scale*2)
+    self:move(0, 0)
+
+    foreach(self._blocks, function(i,v) v:maximize() end)
+end
+
+function Shape:minimize()
+    self._scale = 0.5
+    self._transform = self._transform:scale(self._scale)
+    self:move(0, 0)
+
+    foreach(self._blocks, function(i,v) v:minimize() end)
 end
 
 function Shape:selected(x, y)
-    for i = 1, #self._blocks, 1 do
-        local pos = self._blocks[i]:get_position()
-        if x >= pos.x and x < pos.x + Block.width then
-            if y >= pos.y and y < pos.y + Block.height then
-                return true
-            end
+    for _, block in ipairs(self._blocks) do
+        if block:check_bounds(x, y) then
+            self._selected = true
+            return true
         end
     end
 
+    self._selected = false
     return false
 end
 
-function Shape:attempt_snap()
-    local collisions = {}
-    for i = 1, #self._blocks, 1 do
-        if #self._blocks[i]:get_collisions() > 0 then
-            collisions[#collisions + 1] = true
-        end
-    end
-
-    if #collisions == #self._blocks then
-        self:snap()
-    else
-        -- move shape back towards finger
-        self:move(0, 100)
-    end
-
-    set_grid_blocks_occupied_state(self)
+function Shape:center()
+    local pos = Vector()
+    foreach(self._blocks, function(i, v) pos = pos + v:center() end)
+    return pos / #self._blocks
 end

@@ -8,9 +8,9 @@ local function find_next(self, blocks)
 
     for i = #blocks, 1, -1 do
         neighbors = shuffle(blocks[i]:get_neighbors())
-        for j = 1, #neighbors, 1 do
+        for j = 1, #neighbors do
             next_block = self._blocks[neighbors[j].column][neighbors[j].row]
-            if next_block._status == 0 then
+            if next_block:available() then
                 wipe(neighbors)
                 return next_block
             end
@@ -27,9 +27,9 @@ function InternalGrid:new(columns, rows)
     self._gap_count = 0
     self._columns = columns
 
-    for i = 1, columns, 1 do
+    for i = 1, columns do
         local row = {}
-        for j = 1, rows, 1 do
+        for j = 1, rows do
             row[#row + 1] = InternalBlock(i, j)
             row[#row]:init_neighbors(columns, rows)
         end
@@ -39,6 +39,10 @@ function InternalGrid:new(columns, rows)
     self:create_gaps()
     self:create_shapes()
 end
+
+function InternalGrid:get_shapes() return self._shapes end
+
+function InternalGrid:get_block(column, row) return self._blocks[column][row] end
 
 function InternalGrid:create_gaps()
     -- Determine whether this grid will contain gaps
@@ -50,9 +54,6 @@ function InternalGrid:create_gaps()
         local gap = {self._blocks[column][row]}
         local points = {Coordinate(column, row)}
 
-        --gap[#gap + 1] = self._blocks[column][row]
-        --points[#points + 1] = Coordinate(column, row)
-
         while #gap < self._rows do
             local block = find_next(self, gap)
             if block ~= nil then
@@ -63,16 +64,16 @@ function InternalGrid:create_gaps()
 
         -- Create symmetrical gaps
         if love.math.random() > 0.5 then
-            for i = 1, #gap, 1 do
+            for _, block in ipairs(gap) do
                 -- Adding 1 to Rows and Columns since lua indices start at 1
-                points[#points + 1] = Coordinate((self._columns + 1) - gap[i]:column(), (self._rows + 1) - gap[i]:row())
+                points[#points + 1] = Coordinate((self._columns + 1) - block:column(), (self._rows + 1) - block:row())
             end
         end
 
-        for i = 1, #points, 1 do
+        foreach(points, function(i, v)
             self._gap_count = self._gap_count + 1
-            self._blocks[points[i].column][points[i].row]:disable()
-        end
+            self._blocks[v.column][v.row]:disable()
+        end)
 
         wipe(gap)
         wipe(points)
@@ -84,8 +85,8 @@ function InternalGrid:create_shapes()
     self._shapes = {}
 
     local grid_points = {}
-    for i = 1, self._columns, 1 do
-        for j = 1, self._rows, 1 do
+    for i = 1, self._columns do
+        for j = 1, self._rows do
             grid_points[#grid_points + 1] = Coordinate(i, j)
         end
     end
@@ -93,13 +94,13 @@ function InternalGrid:create_shapes()
 
     local shapes = {}
     while amount < #grid_points - self._gap_count do
-        for i = 1, #grid_points, 1 do
+        foreach(grid_points, function(i, v)
             local shape = {}
-            local block = self._blocks[grid_points[i].column][grid_points[i].row]
-            if block._status == 0 then
-                for j = 1, 5, 1 do
-                    if block ~= nil and block._status == 0 then
-                        block._status = #shapes + 1
+            local block = self._blocks[v.column][v.row]
+            if block:available() then
+                for j = 1, 5 do
+                    if block ~= nil and block:available() then
+                        block:set_status(#shapes + 1)
                         shape[#shape + 1] = block
                         block = find_next(self, shape)
                     end
@@ -108,11 +109,7 @@ function InternalGrid:create_shapes()
                 self._shapes[#self._shapes + 1] = shape
                 amount = amount + #shape
             end
-        end
+        end)
     end
     wipe(grid_points)
-end
-
-function InternalGrid:get_block(column, row)
-    return self._blocks[column][row]
 end

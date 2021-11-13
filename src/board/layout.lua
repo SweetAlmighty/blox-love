@@ -8,7 +8,7 @@ local lg = love.graphics
 function Layout:new(blocks)
     NLay.update(lw.getSafeArea())
 
-    self.padding = 40
+    self.padding = 65
 
     local root = NLay
     local insideRoot = NLay.inside(root, self.padding)
@@ -26,7 +26,7 @@ function Layout:draw()
     lg.setColor(0.1, 0.1, 0.1)
     lg.rectangle("fill", self.grid:get())
     lg.rectangle("fill", self.side:get())
-    lg.setColor(0, 0, 0)
+    lg.setColor(1, 1, 1)
 end
 
 function Layout:resize()

@@ -7,22 +7,25 @@ end
 
 function shuffle(list)
     local shuffled = {}
-    for _, v in ipairs(list) do
+    foreach(list, function(i, v)
         local pos = math.random(1, #shuffled + 1)
         table.insert(shuffled, pos, v)
-    end
+    end)
     return shuffled
 end
 
 function find_index(table, entry)
-    for i = 1, #table, 1 do if table[i] == entry then return i end end
-    return nil
+    for i, v in ipairs(table) do if v == entry then return i end end
 end
 
 function wipe(table)
-    for i = 1, #table, 1 do table[i] = nil end
+    foreach(table, function(i, v) table[i] = nil end)
 end
 
 function move(tbl, new, old)
     table.insert(tbl, new, table.remove(tbl, old))
+end
+
+function foreach(table, func)
+    for i,v in ipairs(table) do func(i, v) end
 end
