@@ -11,17 +11,17 @@ local function get_block(pos)
 end
 
 local function set_grid_block_colors(self, snappable)
-    foreach(self._snap_points, function(i, v) v:set_base_color(snappable) end)
+    foreach(self._snap_points, function(i, v) v:set_color(snappable) end)
 end
 
 local function set_grid_blocks_occupied_state(self)
-    foreach(self._snap_points, function(i, v) v:set_occupied(self._snapped) end)
+    foreach(self._snap_points, function(i, v) v:occupied(self._snapped) end)
 end
 
 local function valid_collisions(self)
     local collisions = {}
     foreach(self._blocks, function(i,v)
-        if #v:get_collisions() > 0 then
+        if #v:collisions() > 0 then
             collisions[#collisions + 1] = true
         end
     end)
@@ -38,7 +38,7 @@ local function determine_snap_points(self)
             for _, block in ipairs(self._blocks) do
                 local next = get_block(snap_block._coordinates + (block._coordinates - self._blocks[1]._coordinates))
 
-                if next == 'nil' or next == nil or next:is_occupied() then
+                if next == 'nil' or next == nil or next:occupied() then
                     self._snap_points = {}
                     break
                 end
@@ -53,8 +53,11 @@ local function determine_snap_points(self)
     set_grid_block_colors(self, true)
 end
 
+local function difference(self)
+    return (self._snap_points[1]:translation() - self._blocks[1]:translation()):split()
+end
+
 function Shape:new(blocks)
-    self._scale = 1
     self._snapped = false
     self._blocks = blocks
     self._snap_points = {}
@@ -63,12 +66,16 @@ function Shape:new(blocks)
     self._sprite_batch = love.graphics.newSpriteBatch(Block.texture)
     color_index = color_index == #Color.colors and 1 or color_index + 1
 
+    self:minimize()
+
     foreach(self._blocks, function(i,v)
         local coords = v:coords() - blocks[1]:coords()
-        v._position = Vector(coords.column * Block.width, coords.row * Block.height)
+        v:position(Vector(coords.column * Block.width, coords.row * Block.height))
     end)
 
-    foreach(self._blocks, function(i,v) v:set_color(self._color) end)
+    self:move(0, 0)
+
+    foreach(self._blocks, function(i,v) v:color(self._color) end)
 end
 
 function Shape:block_count() return #self._blocks end
@@ -82,7 +89,7 @@ function Shape:draw()
 
     self._sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
     foreach(self._blocks, function(i, v)
-        local pos = v:get_translation()
+        local pos = v:translation()
         self._sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
     end)
 
@@ -93,7 +100,7 @@ function Shape:move(dx, dy)
     self._transform = self._transform:translate(dx/self._scale, dy/self._scale)
 
     foreach(self._blocks, function(i, v)
-        v:set_translation(self._transform:transformPoint(v._position.x, v._position.y))
+        v:set_translation(self._transform:transformPoint(v:position():split()))
     end)
 
     determine_snap_points(self)
@@ -103,9 +110,8 @@ function Shape:snap()
     self._snapped = #self._snap_points == #self._blocks
 
     if self._snapped then
-        local dif = self._snap_points[1]:get_translation() - self._blocks[1]:get_translation()
-        self:move(dif.x, dif.y)
-        foreach(self._snap_points, function(i, v) v:set_occupied(true) end)
+        self:move(difference(self))
+        foreach(self._snap_points, function(i, v) v:occupied(true) end)
     end
 
     set_grid_blocks_occupied_state(self)
@@ -115,7 +121,25 @@ function Shape:unsnap()
     if self._snapped then
         foreach(self._blocks, function(i,v) v:unsnap() end)
         self._snapped = false
+    else
+        self:maximize()
     end
+end
+
+function Shape:maximize()
+    self._scale = 1
+    self._transform = self._transform:scale(self._scale*2)
+    self:move(0, 0)
+
+    foreach(self._blocks, function(i,v) v:maximize() end)
+end
+
+function Shape:minimize()
+    self._scale = 0.5
+    self._transform = self._transform:scale(self._scale)
+    self:move(0, 0)
+
+    foreach(self._blocks, function(i,v) v:minimize() end)
 end
 
 function Shape:selected(x, y)
@@ -132,6 +156,6 @@ end
 
 function Shape:center()
     local pos = Vector()
-    foreach(self._blocks, function(i, v) pos = pos + v:get_center() end)
+    foreach(self._blocks, function(i, v) pos = pos + v:center() end)
     return pos / #self._blocks
 end

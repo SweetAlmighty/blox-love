@@ -2,8 +2,8 @@ local remove = { }
 local collisions = { }
 
 local function check_collision(a, b)
-    local one = a:get_translation()
-    local two = b:get_translation()
+    local one = a:translation()
+    local two = b:translation()
 
     return one.x < two.x + Block.width and
            two.x < one.x + Block.width and
@@ -12,7 +12,7 @@ local function check_collision(a, b)
 end
 
 local function handle_collisions(block, collisions)
-    local block_collisions = block:get_collisions()
+    local block_collisions = block:collisions()
 
     -- Process new collisions
     foreach(collisions, function(i, v)

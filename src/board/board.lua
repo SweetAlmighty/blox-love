@@ -10,7 +10,6 @@ local function select_shape(self, shape)
     self._shape_interaction:play()
     self._selected_shape = shape
     self._selected_shape:unsnap()
-    --self._selected_shape:move(0, -100)
 end
 
 local function deselect_shape(self)
@@ -19,9 +18,9 @@ local function deselect_shape(self)
     if self._selected_shape:attempt_snap() then
         self._selected_shape:snap()
     else
+        self._selected_shape:minimize()
         local index = find_index(self._shapes, self._selected_shape)
-        local delta = self._rects[index].center - self._shapes[index]:center()
-        self._selected_shape:move(delta.x, delta.y)
+        self._selected_shape:move((self._rects[index] - self._shapes[index]:center()):split())
     end
 
     self._selected_shape = nil
@@ -42,12 +41,12 @@ end
 function Board:create_shapes()
     local shapes = self._grid:get_shapes()
 
-    local coord = nil
     local shape = {}
-    for i, v in pairs(shapes) do
+    local coord = nil
+    for i, v in ipairs(shapes) do
         shape = {}
-        for j, z in pairs(v) do
-            coord = z._coordinates
+        for j, z in ipairs(v) do
+            coord = z:coords()
             shape[#shape + 1] = ShapeBlock(coord.column, coord.row)
         end
         self._shapes[#self._shapes + 1] = Shape(shape)
@@ -81,12 +80,6 @@ end
 function Board:draw()
     self._layout:draw()
     self._grid:draw()
-
-    love.graphics.setColor(0, 1, 0)
-    for i = 1, #self._rects do
-        love.graphics.rectangle("line", self._rects[i].pos.x, self._rects[i].pos.y, self._rects[i].size.x, self._rects[i].size.y)
-    end
-    love.graphics.setColor(1, 1, 1)
 
     for i = #self._shapes, 1, -1 do
         if self._shapes[i] ~= self._selected_shape then
@@ -132,22 +125,17 @@ function Board:place_shapes()
     self._rects = {}
     local size = Vector(width, height)
 
+    local _x, _y
     for i = 1, columns do
         for j = 1, rows do
-            rect = {
-                size = size,
-                pos = Vector(x + (width * (i - 1)), y + (height * (j - 1)))
-            }
-            rect.center = rect.pos + (size / 2)
-
-            self._rects[#self._rects + 1] = rect
+            _x = x + (width * (i - 1))
+            _y = y + (height * (j - 1))
+            self._rects[#self._rects + 1] = Vector(_x, _y) + (size / 2)
         end
     end
 
-    local delta
     for i, shape in ipairs(self._shapes) do
-        delta = self._rects[i].center - shape:center()
-        shape:move(delta.x, delta.y)
+        shape:move((self._rects[i] - shape:center()):split())
     end
 end
 
