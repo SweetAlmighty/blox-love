@@ -10,7 +10,7 @@ local function find_next(self, blocks)
         neighbors = shuffle(blocks[i]:get_neighbors())
         for j = 1, #neighbors do
             next_block = self._blocks[neighbors[j].column][neighbors[j].row]
-            if next_block._status == 0 then
+            if next_block:available() then
                 wipe(neighbors)
                 return next_block
             end
@@ -39,6 +39,10 @@ function InternalGrid:new(columns, rows)
     self:create_gaps()
     self:create_shapes()
 end
+
+function InternalGrid:get_shapes() return self._shapes end
+
+function InternalGrid:get_block(column, row) return self._blocks[column][row] end
 
 function InternalGrid:create_gaps()
     -- Determine whether this grid will contain gaps
@@ -93,10 +97,10 @@ function InternalGrid:create_shapes()
         foreach(grid_points, function(i, v)
             local shape = {}
             local block = self._blocks[v.column][v.row]
-            if block._status == 0 then
+            if block:available() then
                 for j = 1, 5 do
-                    if block ~= nil and block._status == 0 then
-                        block._status = #shapes + 1
+                    if block ~= nil and block:available() then
+                        block:set_status(#shapes + 1)
                         shape[#shape + 1] = block
                         block = find_next(self, shape)
                     end
@@ -109,5 +113,3 @@ function InternalGrid:create_shapes()
     end
     wipe(grid_points)
 end
-
-function InternalGrid:get_block(column, row) return self._blocks[column][row] end

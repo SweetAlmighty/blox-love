@@ -25,7 +25,7 @@ function CollidableBlock:new(type, column, row)
     CollidableBlock.blocks[#CollidableBlock.blocks + 1] = self
 end
 
-function CollidableBlock:position() return self._position end
+function CollidableBlock:type() return self._type end
 
 function CollidableBlock:collisions() return self._collisions end
 
@@ -34,6 +34,8 @@ function CollidableBlock:translation() return self._translated_position end
 function CollidableBlock:center() return self:translation() + self._offset end
 
 function CollidableBlock:color(value) if value then self._color = value else return self._color end end
+
+function CollidableBlock:position(value) if value ~= nil then self._position = value else return self._position end end
 
 function CollidableBlock:collision_enter(other)
     if find_index(self._collisions, other) == nil then
@@ -50,9 +52,9 @@ function CollidableBlock:collision_exit(other)
     end
 end
 
-function CollidableBlock:scale(scale)
-    if scale then
-        self._scale = scale
+function CollidableBlock:scale(value)
+    if value ~= nil then
+        self._scale = value
         self._size = Vector(Block.width*self._scale, Block.height*self._scale)
         self._offset =  self._size / 2
     else

@@ -36,9 +36,9 @@ local function determine_snap_points(self)
     if valid_collisions(self) then
         for _, snap_block in ipairs(self._blocks[1]:get_snap_blocks()) do
             for _, block in ipairs(self._blocks) do
-                local next = get_block(snap_block._coordinates + (block._coordinates - self._blocks[1]._coordinates))
+                local next = get_block(snap_block:coords() + (block:coords() - self._blocks[1]:coords()))
 
-                if next == 'nil' or next == nil or next:occupied() then
+                if next == nil or next:occupied() then
                     self._snap_points = {}
                     break
                 end

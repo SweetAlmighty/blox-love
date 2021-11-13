@@ -9,6 +9,12 @@ end
 
 function InternalBlock:disable() self._status = -1 end
 
+function InternalBlock:available() return self._status == 0 end
+
+function InternalBlock:disabled() return self._status == -1 end
+
+function InternalBlock:set_status(value) self._status = value end
+
 function InternalBlock:get_neighbors() return self._neighbors end
 
 function InternalBlock:init_neighbors(columns, rows)

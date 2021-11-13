@@ -42,7 +42,7 @@ end
 function check_collisions(blocks)
     foreach(blocks, function(i, v)
         foreach(blocks, function(j, w)
-            if i ~= j and (v._type ~= w._type) then
+            if i ~= j and (v:type() ~= w:type()) then
                 if check_collision(v, w) then
                     collisions[#collisions+1] = w
                 end

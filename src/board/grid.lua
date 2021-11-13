@@ -27,7 +27,7 @@ function Grid:initialize()
     for i = 1, Grid.columns do
         for j = 1, Grid.rows do
             block = self._internal_grid:get_block(i, j)
-            self._blocks[i][j] = block._status ~= -1 and GridBlock(block:column(), block:row()) or nil
+            self._blocks[i][j] = not block:disabled() and GridBlock(block:column(), block:row()) or nil
         end
     end
 
@@ -44,7 +44,7 @@ function Grid:initialize()
     Grid.blocks = self._blocks
 end
 
-function Grid:get_shapes() return self._internal_grid._shapes end
+function Grid:get_shapes() return self._internal_grid:get_shapes() end
 
 function Grid:draw()
     self._sprite_batch:clear()
