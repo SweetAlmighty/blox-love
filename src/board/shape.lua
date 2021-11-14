@@ -20,10 +20,20 @@ local function set_grid_blocks_occupied_state(self)
     for_each(self._snap_points, function(i, v) v:occupied(self._snapped) end)
 end
 
-local function valid_collisions(self)
+local function has_unoccupied_collisions(self, cols)
+    local valid = 0
+    if #cols > 0 then
+        for i, v in ipairs(cols) do
+            if not v:occupied() then valid = valid + 1 end
+        end
+    end
+    return valid ~= 0
+end
+
+local function has_valid_collisions(self)
     local collisions = {}
     for_each(self._blocks, function(i,v)
-        if #v:collisions() > 0 then
+        if has_unoccupied_collisions(self, v:collisions()) then
             collisions[#collisions + 1] = true
         end
     end)
@@ -35,7 +45,7 @@ local function determine_snap_points(self)
 
     self._snap_points = {}
 
-    if valid_collisions(self) then
+    if has_valid_collisions(self) then
         for _, snap_block in ipairs(self._blocks[1]:get_snap_blocks()) do
             for _, block in ipairs(self._blocks) do
                 local next = get_block(snap_block:coords() + (block:coords() - self._blocks[1]:coords()))
@@ -86,7 +96,7 @@ function Shape:block_count() return #self._blocks end
 
 function Shape:get_block(index) return self._blocks[index] end
 
-function Shape:attempt_snap() return valid_collisions(self) end
+function Shape:attempt_snap() return has_valid_collisions(self) end
 
 function Shape:draw()
     self._sprite_batch:clear()
