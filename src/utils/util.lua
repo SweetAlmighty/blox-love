@@ -7,7 +7,7 @@ end
 
 function shuffle(list)
     local shuffled = {}
-    foreach(list, function(i, v)
+    for_each(list, function(i, v)
         local pos = math.random(1, #shuffled + 1)
         table.insert(shuffled, pos, v)
     end)
@@ -19,13 +19,13 @@ function find_index(table, entry)
 end
 
 function wipe(table)
-    foreach(table, function(i, v) table[i] = nil end)
+    for_each(table, function(i, v) table[i] = nil end)
 end
 
 function move(tbl, new, old)
     table.insert(tbl, new, table.remove(tbl, old))
 end
 
-function foreach(table, func)
+function for_each(table, func)
     for i,v in ipairs(table) do func(i, v) end
 end

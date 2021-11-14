@@ -22,4 +22,4 @@ function ShapeBlock:maximize() self:scale(1) end
 
 function ShapeBlock:minimize() self:scale(0.5) end
 
-function ShapeBlock:unsnap() foreach(self:collisions(), self._unsnap) end
+function ShapeBlock:unsnap() for_each(self:collisions(), self._unsnap) end

@@ -2,7 +2,7 @@ require "src/utils/coordinate"
 
 Block = Object:extend()
 
-Block.texture = Resources.LoadImage('block')
+Block.texture = Resources.load_image('block')
 
 Block.width = Block.texture:getWidth()
 Block.height = Block.texture:getHeight()

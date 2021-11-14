@@ -1,17 +1,17 @@
 GameUI = Object:extend()
 
-local function setIcon(self)
+local function set_icon(self)
     self._settings:setIcon("data/images/" .. (self._clicked and "cross" or "gear") .. ".png")
 end
 
-function GameUI:new(onSettingsClicked)
+function GameUI:new(on_settings_clicked)
     self._clicked = false
     self._settings = gooi.newButton({text = "", w = 50, h = 50})
                         :setIcon("data/images/gear.png")
                         :onRelease(function()
                             self._clicked = not self._clicked
-                            setIcon(self)
-                            onSettingsClicked()
+                            set_icon(self)
+                            on_settings_clicked()
                         end)
 
     self._layout = gooi.newPanel({
@@ -26,11 +26,11 @@ function GameUI:new(onSettingsClicked)
                 :setVisible(false)
 end
 
-function GameUI:resetClicked()
+function GameUI:reset_clicked()
     self._clicked = false
-    setIcon(self)
+    set_icon(self)
 end
 
-function GameUI:setVisible(visible)
+function GameUI:set_visible(visible)
     self._layout:setVisible(visible)
 end

@@ -33,9 +33,21 @@ function CollidableBlock:translation() return self._translated_position end
 
 function CollidableBlock:center() return self:translation() + self._offset end
 
-function CollidableBlock:color(value) if value then self._color = value else return self._color end end
+function CollidableBlock:reset_collisions()
+    for_each(self._collisions, function(i, v) self:collision_exit(v) end)
+end
 
-function CollidableBlock:position(value) if value ~= nil then self._position = value else return self._position end end
+function CollidableBlock:color(value)
+    if value ~= nil then
+        self._color = value
+    else return self._color end
+end
+
+function CollidableBlock:position(value)
+    if value ~= nil then
+        self._position = value
+    else return self._position end
+end
 
 function CollidableBlock:collision_enter(other)
     if find_index(self._collisions, other) == nil then

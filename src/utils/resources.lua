@@ -42,7 +42,7 @@ lf.setIdentity("blox-love")
 lg.setDefaultFilter("nearest", "nearest")
 
 Resources = {
-    LoadImage = function(name)
+    load_image = function(name)
         if find_index(images, name) then return images[name] end
         local path = image(name)
         if lf.getInfo(path) then
@@ -52,7 +52,7 @@ Resources = {
         print("Image Error: Image at " .. path .. " could not be found.")
     end,
 
-    LoadFont = function(name, size)
+    load_font = function(name, size)
         if find_index(fonts, name) then return fonts[name] end
         local path = font(name)
         if lf.getInfo(path) then
@@ -62,7 +62,7 @@ Resources = {
         print("Font Error: Font at " .. path .. " could not be found.")
     end,
 
-    LoadData = function(name)
+    load_data = function(name)
         if find_index(data, name) then return data[name] end
         local path = datum(name)
         if lf.getInfo(path) then
@@ -72,7 +72,7 @@ Resources = {
         print("Data Error: Data at " .. path .. " could not be found.")
     end,
 
-    LoadMusic = function(name)
+    load_music = function(name)
         if find_index(audio, name) then return audio[name] end
         local path = music(name)
         if lf.getInfo(path) then
@@ -82,7 +82,7 @@ Resources = {
         print("Music Error: Music at " .. path .. " could not be found.")
     end,
 
-    LoadSFX = function(name)
+    load_sfx = function(name)
         if find_index(audio, name) then return audio[name] end
         local path = sfx(name)
         if lf.getInfo(path) then
@@ -92,11 +92,11 @@ Resources = {
         print("SFX Error: SFX at " .. path .. " could not be found.")
     end,
 
-    SetAudioVolume = function()
-        for _, v in pairs(audio) do v:setVolume() end
+    set_audio_volume = function()
+        for _, v in pairs(audio) do v:set_volume() end
     end,
 
-    Save = function()
+    save = function()
         save_data.sfxMute = Sound.sfxMute
         save_data.sfxVolume = Sound.sfxVolume
         save_data.musicMute = Sound.musicMute
@@ -106,7 +106,7 @@ Resources = {
         if error then print("Save Error: " .. error) end
     end,
 
-    Load = function()
+    load = function()
         if lf.getInfo(file_name) then
             local info, message = json.decode(lf.read(file_name))
             if message == nil then
@@ -124,6 +124,6 @@ Resources = {
         Sound.musicMute = save_data.musicMute
         Sound.musicVolume = save_data.musicVolume
 
-        Resources.SetAudioVolume()
+        Resources.set_audio_volume()
     end
 }
