@@ -13,7 +13,7 @@ state_machine = StateMachine()
 function love.load()
     math.randomseed(os.time() + tonumber(tostring({}):sub(8)))
 
-    Resources.Load()
+    Resources.load()
     UI.setStartStyle()
     state_machine:push(GameStates.MainMenu)
 end
@@ -34,17 +34,17 @@ end
 
 function love.mousemoved(x, y, dx, dy, istouch)
     gooi.moved()
-    state_machine:mousemoved(x, y, dx, dy, istouch)
+    state_machine:mouse_moved(x, y, dx, dy, istouch)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
     gooi.pressed()
-    state_machine:mousepressed(x, y, button, istouch, presses)
+    state_machine:mouse_pressed(x, y, button, istouch, presses)
 end
 
 function love.mousereleased(x, y, button, istouch, presses)
     gooi.released()
-    state_machine:mousereleased(x, y, button, istouch, presses)
+    state_machine:mouse_released(x, y, button, istouch, presses)
 end
 
 function love.resize()

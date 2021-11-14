@@ -2,58 +2,58 @@ require "src/ui/ui"
 
 SettingsUI = Object:extend()
 
-local function homeIcon() return "home" end
-local function returnIcon() return "return" end
-local function nextIcon() return "next" end
+local function home_icon() return "home" end
+local function return_icon() return "return" end
+local function next_icon() return "next" end
 
-local function musicIcon()
+local function music_icon()
     return Sound.musicMute and "musicOff" or "musicOn"
 end
 
-local function sfxIcon()
+local function sfx_icon()
     return Sound.sfxMute and "audioOff" or "audioOn"
 end
 
-local function updateMusicSlider(v)
+local function update_music_slider(v)
     Sound.musicVolume = v
-    Resources.SetAudioVolume()
+    Resources.set_audio_volume()
 end
 
-local function updateSfxSlider(v)
+local function update_sfx_slider(v)
     Sound.sfxVolume = v
-    Resources.SetAudioVolume()
+    Resources.set_audio_volume()
 end
 
-local function updateMusicMute()
+local function update_music_mute()
     Sound.musicMute = not Sound.musicMute
-    Resources.SetAudioVolume()
+    Resources.set_audio_volume()
 end
 
-local function updateSfxMute()
+local function update_sfx_mute()
     Sound.sfxMute = not Sound.sfxMute
-    Resources.SetAudioVolume()
+    Resources.set_audio_volume()
 end
 
-function SettingsUI:new(onReset, onSkip)
-    local function onHomeRelease()
+function SettingsUI:new()
+    local function on_home_release()
         UI.createModal("Return Home?", "modal", function()
             self._panel:setVisible(false)
             state_machine:clear()
         end)
     end
 
-    local function onResetRelease()
-        UI.createModal("Reset blocks?", "modal", function()
+    local function on_reset_release()
+        UI.createModal("Reset?", "modal", function()
             self._panel:setVisible(false)
-            if Gameplay.onReset ~= nil then Gameplay.onReset() end -- hack :(
+            if Gameplay.on_reset ~= nil then Gameplay.on_reset() end -- hack :(
             state_machine:pop()
         end)
     end
 
-    local function onSkipRelease()
+    local function on_skip_release()
         UI.createModal("Skip?", "modal", function()
             self._panel:setVisible(false)
-            if Gameplay.onSkip ~= nil then Gameplay.onSkip() end -- hack :(
+            if Gameplay.on_regen ~= nil then Gameplay.on_regen() end -- hack :(
             state_machine:pop()
         end)
     end
@@ -70,16 +70,16 @@ function SettingsUI:new(onReset, onSkip)
                 :setColspan(3, 1, 2)
 
     self._panel:add(
-        UI.createSlider(Sound.musicVolume, updateMusicSlider),
-        UI.createButton("", musicIcon, updateMusicMute),
-        UI.createSlider(Sound.SfxVolume, updateSfxSlider),
-        UI.createButton("", sfxIcon, updateSfxMute),
-        UI.createButton("", homeIcon, onHomeRelease),
-        UI.createButton("", returnIcon, onResetRelease),
-        UI.createButton("", nextIcon, onSkipRelease)
+        UI.createSlider(Sound.musicVolume, update_music_slider),
+        UI.createButton("", music_icon, update_music_mute),
+        UI.createSlider(Sound.sfxVolume, update_sfx_slider),
+        UI.createButton("", sfx_icon, update_sfx_mute),
+        UI.createButton("", home_icon, on_home_release),
+        UI.createButton("", return_icon, on_reset_release),
+        UI.createButton("", next_icon, on_skip_release)
     ):setOpaque(true):setVisible(false)
 end
 
-function SettingsUI:setVisible(visible)
+function SettingsUI:set_visible(visible)
     self._panel:setVisible(visible)
 end

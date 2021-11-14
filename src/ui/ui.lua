@@ -1,7 +1,7 @@
-local buttonPress = Resources.LoadSFX('Switch sounds 2')
+local buttonPress = Resources.load_sfx('Switch sounds 2')
 local style = {
     bgColor = { 0.5, 0.5, 1 },
-    font = Resources.LoadFont("Uni Sans Heavy", 30),
+    font = Resources.load_font("Uni Sans Heavy", 30),
 }
 
 UI = {

@@ -9,8 +9,8 @@ StateMachine = Object:extend()
 
 function StateMachine:new()
     self._stack = { }
-    self._back = Resources.LoadSFX('Go back sounds 5')
-    self._forward = Resources.LoadSFX('Go forward sounds 1')
+    self._back = Resources.load_sfx('Go back sounds 5')
+    self._forward = Resources.load_sfx('Go forward sounds 1')
 end
 
 function StateMachine:pop()
@@ -49,6 +49,6 @@ function StateMachine:resize() self._stack[#self._stack]:resize() end
 function StateMachine:input(key) self._stack[#self._stack]:input(key) end
 function StateMachine:update(dt) self._stack[#self._stack]:update(dt) end
 function StateMachine:clear() while(#self._stack > 1) do self:pop() end end
-function StateMachine:mousemoved(x, y, dx, dy, istouch) self._stack[#self._stack]:mousemoved(x, y, dx, dy, istouch) end
-function StateMachine:mousepressed(x, y, button, istouch, presses) self._stack[#self._stack]:mousepressed(x, y, button, istouch, presses) end
-function StateMachine:mousereleased(x, y, button, istouch, presses) self._stack[#self._stack]:mousereleased(x, y, button, istouch, presses) end
+function StateMachine:mouse_moved(x, y, dx, dy, istouch) self._stack[#self._stack]:mouse_moved(x, y, dx, dy, istouch) end
+function StateMachine:mouse_pressed(x, y, button, istouch, presses) self._stack[#self._stack]:mouse_pressed(x, y, button, istouch, presses) end
+function StateMachine:mouse_released(x, y, button, istouch, presses) self._stack[#self._stack]:mouse_released(x, y, button, istouch, presses) end

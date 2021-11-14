@@ -12,6 +12,10 @@ function GridBlock:new(column, row)
     self:position(Vector((column - 1) * Block.width, (row - 1) * Block.height))
 end
 
-function GridBlock:set_color(snappable) GridBlock.super.color(self, snappable and hover or normal) end
+function GridBlock:occupied(value)
+    if value ~= nil then
+        self._occupied = value
+    else return self._occupied end
+end
 
-function GridBlock:occupied(value) if value ~= nil then self._occupied = value else return self._occupied end end
+function GridBlock:set_color(snappable) GridBlock.super.color(self, snappable and hover or normal) end

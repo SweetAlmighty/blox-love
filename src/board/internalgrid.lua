@@ -70,7 +70,7 @@ function InternalGrid:create_gaps()
             end
         end
 
-        foreach(points, function(i, v)
+        for_each(points, function(i, v)
             self._gap_count = self._gap_count + 1
             self._blocks[v.column][v.row]:disable()
         end)
@@ -94,7 +94,7 @@ function InternalGrid:create_shapes()
 
     local shapes = {}
     while amount < #grid_points - self._gap_count do
-        foreach(grid_points, function(i, v)
+        for_each(grid_points, function(i, v)
             local shape = {}
             local block = self._blocks[v.column][v.row]
             if block:available() then

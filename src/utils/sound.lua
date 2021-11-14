@@ -8,7 +8,7 @@ function Sound:new(filename, type)
     self._data = love.sound.newSoundData(filename)
 end
 
-function Sound:setVolume()
+function Sound:set_volume()
     local volume = 0
     if self._type == "static" then
         volume = Sound.sfxMute and 0 or Sound.sfxVolume
@@ -23,13 +23,13 @@ end
 
 function Sound:play()
     self._source = newSource(self._data, self._type)
-    self:setVolume()
+    self:set_volume()
     self._source:play()
 end
 
 function Sound:play_looping()
     self._source = newSource(self._data, self._type)
-    self:setVolume()
+    self:set_volume()
     self._source:setLooping(true)
     self._source:play()
 end

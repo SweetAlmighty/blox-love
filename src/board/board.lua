@@ -9,7 +9,11 @@ Board = Object:extend()
 local function select_shape(self, shape)
     self._shape_interaction:play()
     self._selected_shape = shape
-    self._selected_shape:unsnap()
+    if self._selected_shape:snapped() then
+        self._selected_shape:unsnap()
+    else
+        self._selected_shape:maximize()
+    end
 end
 
 local function deselect_shape(self)
@@ -26,15 +30,22 @@ local function deselect_shape(self)
     self._selected_shape = nil
 end
 
-function Board:new(onGridComplete)
+function Board:new(on_grid_complete)
     self._rects = {}
     self._shapes = {}
     self._layout = Layout()
-    self._onGridComplete = onGridComplete
-    self._grid = Grid(self._layout:get_grid_center())
-    self._shape_interaction = Resources.LoadSFX("Switch sounds 1")
+    self._on_grid_complete = on_grid_complete
+    self._shape_interaction = Resources.load_sfx("Switch sounds 1")
 
+    self:create_grid_and_shapes()
+end
+
+function Board:resize() self._layout:resize() end
+
+function Board:create_grid_and_shapes()
+    self._grid = Grid(self._layout:get_grid_center())
     self:create_shapes()
+    self:segment_sideboard()
     self:place_shapes()
 end
 
@@ -56,23 +67,23 @@ function Board:create_shapes()
 end
 
 function Board:reset()
-    wipe(self._shapes)
-    wipe(CollidableBlock.blocks)
-
-    self._grid = Grid(self._layout:get_grid_center())
-
-    self:create_shapes()
+    self:unsnap_shapes()
     self:place_shapes()
     self._selected_shape = nil
+end
+
+function Board:regen()
+    wipe(self._shapes)
+    wipe(CollidableBlock.blocks)
+    self._selected_shape = nil
+    self:create_grid_and_shapes()
 end
 
 function Board:update(dt)
     check_collisions(CollidableBlock.blocks)
     if self._grid:is_complete() then
-        if self._onGridComplete then
-            self._onGridComplete()
-        else
-            self:reset()
+        if self._on_grid_complete then
+            self._on_grid_complete()
         end
     end
 end
@@ -102,7 +113,7 @@ function Board:mouse_pressed(x, y)
     for _, shape in ipairs(self._shapes) do
         if shape:selected(x, y) then
             select_shape(self, shape)
-            return
+            break
         end
     end
 end
@@ -113,7 +124,15 @@ function Board:mouse_released(x, y)
     end
 end
 
-function Board:place_shapes()
+function Board:unsnap_shapes()
+    for _, shape in ipairs(self._shapes) do
+        if shape:snapped() then
+            shape:move_to_sideboard()
+        end
+    end
+end
+
+function Board:segment_sideboard()
     local x, y, w, h = self._layout:get_side_rect()
 
     local columns = 2
@@ -133,12 +152,10 @@ function Board:place_shapes()
             self._rects[#self._rects + 1] = Vector(_x, _y) + (size / 2)
         end
     end
+end
 
+function Board:place_shapes()
     for i, shape in ipairs(self._shapes) do
         shape:move((self._rects[i] - shape:center()):split())
     end
-end
-
-function Board:resize()
-    self._layout:resize()
 end
