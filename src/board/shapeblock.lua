@@ -8,8 +8,8 @@ function ShapeBlock:new(column, row)
     self._snap_blocks = {}
     self._unsnap = function(i, v) v:occupied(false) end
     self._distance_sort = function (lhs, rhs)
-        return distance(lhs:position(), self:position()) <
-                distance(rhs:position(), self:position())
+        return distance(lhs:translation(), self:translation()) <
+                distance(rhs:translation(), self:translation())
     end
 end
 
