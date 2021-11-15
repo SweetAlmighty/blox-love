@@ -1,4 +1,4 @@
-require "src/ui/SettingsUI"
+require "src/ui/settingsui"
 
 Settings = State:extend()
 
