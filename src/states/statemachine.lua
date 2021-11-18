@@ -1,3 +1,4 @@
+require "src/lib/gooi"
 require "src/states/state"
 require "src/states/settings"
 require "src/states/gameplay"
@@ -6,6 +7,9 @@ require "src/states/mainmenu"
 GameStates = { MainMenu = 2, Gameplay = 3, Settings = 4 }
 
 StateMachine = Object:extend()
+
+local moonshine = require "src/lib/moonshine"
+local effect = moonshine(moonshine.effects.boxblur)
 
 function StateMachine:new()
     self._stack = { }
@@ -43,12 +47,38 @@ function StateMachine:push(type)
     end
 end
 
+function StateMachine:draw()
+    effect(function()
+        if #self._stack > 1 then
+            self._stack[#self._stack-1]:draw()
+        end
+    end)
+
+    self._stack[#self._stack]:draw()
+    gooi.draw()
+end
+
+function StateMachine:update(dt)
+    gooi.update(dt)
+    self._stack[#self._stack]:update(dt)
+end
+
+function StateMachine:mouse_moved(x, y, dx, dy, istouch)
+    gooi.moved()
+    self._stack[#self._stack]:mouse_moved(x, y, dx, dy, istouch)
+end
+
+function StateMachine:mouse_pressed(x, y, button, istouch, presses)
+    gooi.pressed()
+    self._stack[#self._stack]:mouse_pressed(x, y, button, istouch, presses)
+end
+
+function StateMachine:mouse_released(x, y, button, istouch, presses)
+    gooi.released()
+    self._stack[#self._stack]:mouse_released(x, y, button, istouch, presses)
+end
+
 function StateMachine:count() return #self._stack end
-function StateMachine:draw() self._stack[#self._stack]:draw() end
 function StateMachine:resize() self._stack[#self._stack]:resize() end
 function StateMachine:input(key) self._stack[#self._stack]:input(key) end
-function StateMachine:update(dt) self._stack[#self._stack]:update(dt) end
 function StateMachine:clear() while(#self._stack > 1) do self:pop() end end
-function StateMachine:mouse_moved(x, y, dx, dy, istouch) self._stack[#self._stack]:mouse_moved(x, y, dx, dy, istouch) end
-function StateMachine:mouse_pressed(x, y, button, istouch, presses) self._stack[#self._stack]:mouse_pressed(x, y, button, istouch, presses) end
-function StateMachine:mouse_released(x, y, button, istouch, presses) self._stack[#self._stack]:mouse_released(x, y, button, istouch, presses) end

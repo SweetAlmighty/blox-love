@@ -8,3 +8,6 @@ release/**
 *.txt
 *.toml
 *.love
+
+# Specific files
+.DS_Store
