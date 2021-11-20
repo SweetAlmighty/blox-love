@@ -3,13 +3,14 @@ require "src/states/state"
 require "src/states/settings"
 require "src/states/gameplay"
 require "src/states/mainmenu"
+local moonshine = require "src/lib/moonshine"
 
 GameStates = { MainMenu = 2, Gameplay = 3, Settings = 4 }
 
 StateMachine = Object:extend()
 
-local moonshine = require "src/lib/moonshine"
-local effect = moonshine(moonshine.effects.boxblur)
+local box_blur = moonshine(moonshine.effects.boxblur)
+box_blur.boxblur.radius = 5
 
 function StateMachine:new()
     self._stack = { }
@@ -48,11 +49,11 @@ function StateMachine:push(type)
 end
 
 function StateMachine:draw()
-    effect(function()
-        if #self._stack > 1 then
+    if #self._stack > 1 then
+        box_blur(function()
             self._stack[#self._stack-1]:draw()
-        end
-    end)
+        end)
+    end
 
     self._stack[#self._stack]:draw()
     gooi.draw()
