@@ -1,6 +1,10 @@
-require "src/ui/ui"
+local UI = require "src/ui/ui"
+local Sound = require "src/utils/sound"
+local Object = require "src/lib/classic"
+local Resources = require "src/utils/resources"
+local Gameplay = require "src/states/gameplay"
 
-SettingsUI = Object:extend()
+local SettingsUI = Object:extend()
 
 local function home_icon() return "home" end
 local function next_icon() return "next" end
@@ -76,3 +80,5 @@ end
 function SettingsUI:set_visible(visible)
     self._panel:setVisible(visible)
 end
+
+return SettingsUI

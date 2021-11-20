@@ -1,6 +1,9 @@
-require "src/board/collidableblock"
+local Color = require "src/utils/color"
+local Block = require "src/board/block"
+local Vector = require "src/lib/brinevector"
+local CollidableBlock = require "src/board/collidableblock"
 
-GridBlock = CollidableBlock:extend()
+local GridBlock = CollidableBlock:extend()
 
 local normal = Color(1, 1, 1)
 local hover = Color(0.5, 0.5, 0.5)
@@ -19,3 +22,5 @@ function GridBlock:occupied(value)
 end
 
 function GridBlock:set_color(snappable) GridBlock.super.color(self, snappable and hover or normal) end
+
+return GridBlock

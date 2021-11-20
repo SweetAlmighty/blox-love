@@ -1,8 +1,9 @@
-require "src/board/block"
+local Utils = require "src/utils/util"
+local Color = require "src/utils/color"
+local Block = require "src/board/block"
+local Vector = require "src/lib/brinevector"
 
-Vector = require "src/lib/brinevector"
-
-CollidableBlock = Block:extend()
+local CollidableBlock = Block:extend()
 
 CollidableBlock.types = {
     GRID = 1,
@@ -34,7 +35,7 @@ function CollidableBlock:translation() return self._translated_position end
 function CollidableBlock:center() return self:translation() + self._offset end
 
 function CollidableBlock:reset_collisions()
-    for_each(self._collisions, function(i, v) self:collision_exit(v) end)
+    Utils.for_each(self._collisions, function(i, v) self:collision_exit(v) end)
 end
 
 function CollidableBlock:color(value)
@@ -50,14 +51,14 @@ function CollidableBlock:position(value)
 end
 
 function CollidableBlock:collision_enter(other)
-    if find_index(self._collisions, other) == nil then
+    if Utils.find_index(self._collisions, other) == nil then
         table.insert(self._collisions, other)
         return true
     end
 end
 
 function CollidableBlock:collision_exit(other)
-    local index = find_index(self._collisions, other)
+    local index = Utils.find_index(self._collisions, other)
     if index then
         table.remove(self._collisions, index)
         return true
@@ -87,3 +88,5 @@ function CollidableBlock:check_bounds(x, y)
         end
     end
 end
+
+return CollidableBlock

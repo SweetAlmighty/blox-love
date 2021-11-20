@@ -1,4 +1,11 @@
-Shape = Object:extend()
+local Grid = require "src/board/grid"
+local Utils = require "src/utils/util"
+local Color = require "src/utils/color"
+local Block = require "src/board/block"
+local Object = require "src/lib/classic"
+local Vector = require "src/lib/brinevector"
+
+local Shape = Object:extend()
 
 local color_index = 1
 
@@ -13,11 +20,11 @@ local function get_block(pos)
 end
 
 local function set_grid_block_colors(self, snappable)
-    for_each(self._snap_points, function(i, v) v:set_color(snappable) end)
+    Utils.for_each(self._snap_points, function(i, v) v:set_color(snappable) end)
 end
 
 local function set_grid_blocks_occupied_state(self)
-    for_each(self._snap_points, function(i, v) v:occupied(self._snapped) end)
+    Utils.for_each(self._snap_points, function(i, v) v:occupied(self._snapped) end)
 end
 
 local function has_unoccupied_collisions(self, cols)
@@ -32,7 +39,7 @@ end
 
 local function has_valid_collisions(self)
     local collisions = {}
-    for_each(self._blocks, function(i,v)
+    Utils.for_each(self._blocks, function(i,v)
         if has_unoccupied_collisions(self, v:collisions()) then
             collisions[#collisions + 1] = true
         end
@@ -80,14 +87,14 @@ function Shape:new(blocks)
 
     self:minimize()
 
-    for_each(self._blocks, function(i,v)
+    Utils.for_each(self._blocks, function(i,v)
         local coords = v:coords() - blocks[1]:coords()
         v:position(Vector(coords.column * Block.width, coords.row * Block.height))
     end)
 
     self:move(0, 0)
 
-    for_each(self._blocks, function(i,v) v:color(self._color) end)
+    Utils.for_each(self._blocks, function(i,v) v:color(self._color) end)
 end
 
 function Shape:snapped() return self._snapped end
@@ -102,7 +109,7 @@ function Shape:draw()
     self._sprite_batch:clear()
 
     self._sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
-    for_each(self._blocks, function(i, v)
+    Utils.for_each(self._blocks, function(i, v)
         local pos = v:translation()
         self._sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
     end)
@@ -113,7 +120,7 @@ end
 function Shape:move(dx, dy)
     self._transform = self._transform:translate(dx/self._scale, dy/self._scale)
 
-    for_each(self._blocks, function(i, v)
+    Utils.for_each(self._blocks, function(i, v)
         v:set_translation(self._transform:transformPoint(v:position():split()))
     end)
 
@@ -125,7 +132,7 @@ function Shape:snap()
 
     if self._snapped then
         self:move(difference(self))
-        for_each(self._snap_points, function(i, v) v:occupied(true) end)
+        Utils.for_each(self._snap_points, function(i, v) v:occupied(true) end)
     end
 
     set_grid_blocks_occupied_state(self)
@@ -134,13 +141,13 @@ end
 function Shape:unsnap()
     if self._snapped then
         self._snapped = false
-        for_each(self._blocks, function(i,v) v:unsnap() end)
+        Utils.for_each(self._blocks, function(i,v) v:unsnap() end)
     end
 end
 
 function Shape:move_to_sideboard()
     self._snapped = false
-    for_each(self._blocks, function(i,v)
+    Utils.for_each(self._blocks, function(i,v)
         v:unsnap()
         v:reset_collisions()
     end)
@@ -153,7 +160,7 @@ function Shape:maximize()
     self._transform = self._transform:scale(self._scale*2)
     self:move(0, 0)
 
-    for_each(self._blocks, function(i,v) v:maximize() end)
+    Utils.for_each(self._blocks, function(i,v) v:maximize() end)
 end
 
 function Shape:minimize()
@@ -161,7 +168,7 @@ function Shape:minimize()
     self._transform = self._transform:scale(self._scale)
     self:move(0, 0)
 
-    for_each(self._blocks, function(i,v) v:minimize() end)
+    Utils.for_each(self._blocks, function(i,v) v:minimize() end)
 end
 
 function Shape:selected(x, y)
@@ -178,6 +185,8 @@ end
 
 function Shape:center()
     local pos = Vector()
-    for_each(self._blocks, function(i, v) pos = pos + v:center() end)
+    Utils.for_each(self._blocks, function(i, v) pos = pos + v:center() end)
     return pos / #self._blocks
 end
+
+return Shape

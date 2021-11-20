@@ -1,7 +1,10 @@
-require "src/ui/gameui"
-require "src/board/board"
+local UI = require "src/ui/ui"
+local GameUI = require "src/ui/gameui"
+local Board = require "src/board/board"
+local State = require "src/states/state"
+local Resources = require "src/utils/resources"
 
-Gameplay = State:extend()
+local Gameplay = State:extend()
 
 local function reset_board(self)
     self._paused = false
@@ -83,3 +86,5 @@ function Gameplay:mouse_released(x, y, button, istouch, presses)
     Gameplay.super.mouse_released(self, x, y, button, istouch, presses)
     if not self._paused then self._board:mouse_released() end
 end
+
+return Gameplay

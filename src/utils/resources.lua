@@ -1,8 +1,8 @@
-require "src/utils/sound"
 local json = require "src/lib/json"
+local Utils = require "src/utils/util"
+local Sound = require "src/utils/sound"
 
-local lg = love.graphics
-local lf = love.filesystem
+local Resources = { }
 
 local fonts = {}
 local font_type = ".otf"
@@ -37,93 +37,95 @@ local default_save_data = {
     musicVolume = 0.5,
 }
 
+local lf = love.filesystem
 lf.setIdentity("blox-love")
 
+local lg = love.graphics
 lg.setDefaultFilter("nearest", "nearest")
 
-Resources = {
-    load_image = function(name)
-        if find_index(images, name) then return images[name] end
-        local path = image(name)
-        if lf.getInfo(path) then
-            images[name] = lg.newImage(path)
-            return images[name]
-        end
-        print("Image Error: Image at " .. path .. " could not be found.")
-    end,
+function Resources.load_image(name)
+    if Utils:find_index(images, name) then return images[name] end
+    local path = image(name)
+    if lf.getInfo(path) then
+        images[name] = lg.newImage(path)
+        return images[name]
+    end
+    print("Image Error: Image at " .. path .. " could not be found.")
+end
 
-    load_font = function(name, size)
-        if find_index(fonts, name) then return fonts[name] end
-        local path = font(name)
-        if lf.getInfo(path) then
-            fonts[name] = lg.newFont(path, size)
-            return fonts[name]
-        end
-        print("Font Error: Font at " .. path .. " could not be found.")
-    end,
+function Resources.load_font(name, size)
+    if Utils:find_index(fonts, name) then return fonts[name] end
+    local path = font(name)
+    if lf.getInfo(path) then
+        fonts[name] = lg.newFont(path, size)
+        return fonts[name]
+    end
+    print("Font Error: Font at " .. path .. " could not be found.")
+end
 
-    load_data = function(name)
-        if find_index(data, name) then return data[name] end
-        local path = datum(name)
-        if lf.getInfo(path) then
-            data[name] = json.decode(lf.read(path))
-            return data[name]
-        end
-        print("Data Error: Data at " .. path .. " could not be found.")
-    end,
+function Resources.load_data(name)
+    if Utils.find_index(data, name) then return data[name] end
+    local path = datum(name)
+    if lf.getInfo(path) then
+        data[name] = json.decode(lf.read(path))
+        return data[name]
+    end
+    print("Data Error: Data at " .. path .. " could not be found.")
+end
 
-    load_music = function(name)
-        if find_index(audio, name) then return audio[name] end
-        local path = music(name)
-        if lf.getInfo(path) then
-            audio[name] = Sound(path, "stream")
-            return audio[name]
-        end
-        print("Music Error: Music at " .. path .. " could not be found.")
-    end,
+function Resources.load_music(name)
+    if Utils.find_index(audio, name) then return audio[name] end
+    local path = music(name)
+    if lf.getInfo(path) then
+        audio[name] = Sound(path, "stream")
+        return audio[name]
+    end
+    print("Music Error: Music at " .. path .. " could not be found.")
+end
 
-    load_sfx = function(name)
-        if find_index(audio, name) then return audio[name] end
-        local path = sfx(name)
-        if lf.getInfo(path) then
-            audio[name] = Sound(path, "static")
-            return audio[name]
-        end
-        print("SFX Error: SFX at " .. path .. " could not be found.")
-    end,
+function Resources.load_sfx(name)
+    if Utils.find_index(audio, name) then return audio[name] end
+    local path = sfx(name)
+    if lf.getInfo(path) then
+        audio[name] = Sound(path, "static")
+        return audio[name]
+    end
+    print("SFX Error: SFX at " .. path .. " could not be found.")
+end
 
-    set_audio_volume = function()
-        for _, v in pairs(audio) do v:set_volume() end
-    end,
+function Resources.set_audio_volume()
+    for _, v in pairs(audio) do v:set_volume() end
+end
 
-    save = function()
-        save_data.sfxMute = Sound.sfxMute
-        save_data.sfxVolume = Sound.sfxVolume
-        save_data.musicMute = Sound.musicMute
-        save_data.musicVolume = Sound.musicVolume
+function Resources.save()
+    save_data.sfxMute = Sound.sfxMute
+    save_data.sfxVolume = Sound.sfxVolume
+    save_data.musicMute = Sound.musicMute
+    save_data.musicVolume = Sound.musicVolume
 
+    local _, error = lf.write(file_name, json.encode(save_data))
+    if error then print("Save Error: " .. error) end
+end
+
+function Resources.load()
+    if lf.getInfo(file_name) then
+        local info, message = json.decode(lf.read(file_name))
+        if message == nil then
+            save_data = info
+        else print("Load Error: " .. message) end
+    else
+        save_data = default_save_data
+        
         local _, error = lf.write(file_name, json.encode(save_data))
         if error then print("Save Error: " .. error) end
-    end,
-
-    load = function()
-        if lf.getInfo(file_name) then
-            local info, message = json.decode(lf.read(file_name))
-            if message == nil then
-                save_data = info
-            else print("Load Error: " .. message) end
-        else
-            save_data = default_save_data
-            
-            local _, error = lf.write(file_name, json.encode(save_data))
-            if error then print("Save Error: " .. error) end
-        end
-
-        Sound.sfxMute = save_data.sfxMute
-        Sound.sfxVolume = save_data.sfxVolume
-        Sound.musicMute = save_data.musicMute
-        Sound.musicVolume = save_data.musicVolume
-
-        Resources.set_audio_volume()
     end
-}
+
+    Sound.sfxMute = save_data.sfxMute
+    Sound.sfxVolume = save_data.sfxVolume
+    Sound.musicMute = save_data.musicMute
+    Sound.musicVolume = save_data.musicVolume
+
+    Resources.set_audio_volume()
+end
+
+return Resources

@@ -1,6 +1,8 @@
-require "src/utils/coordinate"
+local Object = require "src/lib/classic"
+local Resources = require "src/utils/resources"
+local Coordinate = require "src/utils/coordinate"
 
-Block = Object:extend()
+local Block = Object:extend()
 
 Block.texture = Resources.load_image('block')
 
@@ -14,3 +16,5 @@ function Block:row() return self._coordinates.row end
 function Block:column() return self._coordinates.column end
 
 function Block:new(column, row) self._coordinates = Coordinate(column, row) end
+
+return Block

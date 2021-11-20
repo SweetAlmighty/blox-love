@@ -1,11 +1,8 @@
-Object = require "src/lib/classic"
-
-require "src/utils/util"
-require "src/utils/input"
-require "src/utils/resources"
-require "src/utils/color"
-require "src/states/statemachine"
-require "src/ui/ui"
+require "src/lib/gooi"
+local UI = require "src/ui/ui"
+local Object = require "src/lib/classic"
+local Resources = require "src/utils/resources"
+local StateMachine = require "src/states/statemachine"
 
 state_machine = StateMachine()
 

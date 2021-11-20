@@ -1,6 +1,8 @@
 local NLay = require "src/lib/nlay"
+local Object = require "src/lib/classic"
+local Vector = require "src/lib/brinevector"
 
-Layout = Object:extend()
+local Layout = Object:extend()
 
 local lw = love.window
 local lg = love.graphics
@@ -45,3 +47,5 @@ end
 function Layout:get_side_rect()
     return self.side:get()
 end
+
+return Layout

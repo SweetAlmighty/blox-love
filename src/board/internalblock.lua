@@ -1,4 +1,7 @@
-InternalBlock = Block:extend()
+local Block = require "src/board/block"
+local Coordinate = require "src/utils/coordinate"
+
+local InternalBlock = Block:extend()
 
 function InternalBlock:new(column, row)
     InternalBlock.super.new(self, column, row)
@@ -34,3 +37,5 @@ function InternalBlock:init_neighbors(columns, rows)
         self._neighbors[#self._neighbors + 1] = Coordinate(self:column(), self:row() + 1)
     end
 end
+
+return InternalBlock

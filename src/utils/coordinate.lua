@@ -1,4 +1,6 @@
-Coordinate = Object:extend()
+local Object = require "src/lib/classic"
+
+local Coordinate = Object:extend()
 
 function Coordinate:new(column, row)
     self.row = row
@@ -16,3 +18,5 @@ end
 function Coordinate.__sub(lhs, rhs)
     return Coordinate(lhs.column - rhs.column, lhs.row - rhs.row)
 end
+
+return Coordinate

@@ -1,13 +1,14 @@
-require "src/lib/gooi"
-require "src/states/state"
-require "src/states/settings"
-require "src/states/gameplay"
-require "src/states/mainmenu"
+local Object = require "src/lib/classic"
+local State = require "src/states/state"
 local moonshine = require "src/lib/moonshine"
+local Settings = require "src/states/settings"
+local Gameplay = require "src/states/gameplay"
+local MainMenu = require "src/states/mainmenu"
+local Resources = require "src/utils/resources"
 
 GameStates = { MainMenu = 2, Gameplay = 3, Settings = 4 }
 
-StateMachine = Object:extend()
+local StateMachine = Object:extend()
 
 local box_blur = moonshine(moonshine.effects.boxblur)
 box_blur.boxblur.radius = 5
@@ -83,3 +84,5 @@ function StateMachine:count() return #self._stack end
 function StateMachine:resize() self._stack[#self._stack]:resize() end
 function StateMachine:input(key) self._stack[#self._stack]:input(key) end
 function StateMachine:clear() while(#self._stack > 1) do self:pop() end end
+
+return StateMachine
