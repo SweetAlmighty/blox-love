@@ -7,23 +7,17 @@ local function on_exit()
     love.event.quit()
 end
 
-local function on_play_released()
-    state_machine:push(GameStates.Gameplay)
-end
+local function on_play_released() state_machine:push(GameStates.Gameplay) end
 
-local function on_exit_released()
-    UI.createModal("Exit Blox?", "modal", on_exit)
-end
+local function on_exit_released() UI.create_modal("Exit Blox?", "modal", on_exit) end
 
 function MainMenu:new()
     MainMenu.super.new(self)
-    self._layout = UI.createPanel("BLOX", {x = 0, y = 0, w = 1280, h = 720}, "grid", 5, 3)
-    self._layout:add(UI.createButton("PLAY", nil, on_play_released), "3,2")
-    self._layout:add(UI.createButton("EXIT", nil, on_exit_released), "4,2")
+    self._layout = UI.create_panel("BLOX", {x = 0, y = 0, w = love.graphics.getWidth(), h = love.graphics.getHeight()}, "grid", 5, 3)
+    self._layout:add(UI.create_button("PLAY", nil, on_play_released), "3,2")
+    self._layout:add(UI.create_button("EXIT", nil, on_exit_released), "4,2")
 end
 
-function MainMenu:input(key) end
-function MainMenu:update(dt) end
 function MainMenu:enter() self._layout:setVisible(true) end
 function MainMenu:pause() self._layout:setVisible(false) end
 function MainMenu:unpause() self._layout:setVisible(true) end
