@@ -38,10 +38,10 @@ UI = {
 	create_modal = function(text, style, ok)
 	    buttonPress:play()
 	    gooi.panelDialog = UI.create_panel("", {
-		    x = love.graphics.getWidth()/3,
-		    y = love.graphics.getHeight()/4,
-		    w = love.graphics.getWidth()/3,
-		    h = love.graphics.getHeight()/2
+		    x = love.graphics.getWidth()/2.67,
+		    y = love.graphics.getHeight()/3,
+		    w = love.graphics.getWidth()/4,
+		    h = love.graphics.getHeight()/3
 		}, "grid", 3, 3):setOpaque(true):warning()
 
     	local cancel = function()
