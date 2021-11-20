@@ -1,7 +1,9 @@
-require "src/board/gridblock"
-require "src/board/internalgrid"
+local Block = require "src/board/block"
+local Object = require "src/lib/classic"
+local GridBlock = require "src/board/gridblock"
+local InternalGrid = require "src/board/internalgrid"
 
-Grid = Object:extend()
+local Grid = Object:extend()
 
 function Grid:new(center)
     self._shapes = {}
@@ -68,3 +70,5 @@ function Grid:is_complete()
 
     return true
 end
+
+return Grid

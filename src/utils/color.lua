@@ -1,4 +1,8 @@
-Color = Object:extend()
+local Utils = require "src/utils/util"
+local Object = require "src/lib/classic"
+local Resources = require "src/utils/resources"
+
+local Color = Object:extend()
 
 Color.colors = {}
 
@@ -10,10 +14,12 @@ function Color:new(r, g, b)
     self.b = b
 end
 
-for_each(load, function(i, v)
+Utils.for_each(load, function(i, v)
     Color.colors[#Color.colors + 1] = Color(v.r / 255, v.g / 255, v.b / 255)
 end)
 
 function Color:split() return self.r, self.g, self.b end
 
 function Color.__tostring(c) return "Color(" .. c.r .. ", " .. c.g.. ", " .. c.b.. ")" end
+
+return Color

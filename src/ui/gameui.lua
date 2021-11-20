@@ -1,4 +1,6 @@
-GameUI = Object:extend()
+local Object = require "src/lib/classic"
+
+local GameUI = Object:extend()
 
 local function set_icon(self)
     self._settings:setIcon("data/images/" .. (self._clicked and "cross" or "gear") .. ".png")
@@ -34,3 +36,5 @@ end
 function GameUI:set_visible(visible)
     self._layout:setVisible(visible)
 end
+
+return GameUI

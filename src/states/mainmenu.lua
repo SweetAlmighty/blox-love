@@ -1,6 +1,8 @@
-require "src/ui/ui"
+local UI = require "src/ui/ui"
+local State = require "src/states/state"
+local Resources = require "src/utils/resources"
 
-MainMenu = State:extend()
+local MainMenu = State:extend()
 
 local function on_exit()
     Resources.save()
@@ -21,3 +23,5 @@ end
 function MainMenu:enter() self._layout:setVisible(true) end
 function MainMenu:pause() self._layout:setVisible(false) end
 function MainMenu:unpause() self._layout:setVisible(true) end
+
+return MainMenu

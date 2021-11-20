@@ -1,10 +1,15 @@
-require "src/board/shapeblock"
-require "src/board/grid"
-require "src/board/shape"
-require "src/utils/collisions"
-require "src/board/layout"
+local Grid = require "src/board/grid"
+local Utils = require "src/utils/util"
+local Shape = require "src/board/shape"
+local Object = require "src/lib/classic"
+local Layout = require "src/board/layout"
+local Vector = require "src/lib/brinevector"
+local Resources = require "src/utils/resources"
+local ShapeBlock = require "src/board/shapeblock"
+local Collisions = require "src/utils/collisions"
+local CollidableBlock = require "src/board/collidableblock"
 
-Board = Object:extend()
+local Board = Object:extend()
 
 local function select_shape(self, shape)
     self._shape_interaction:play()
@@ -23,7 +28,7 @@ local function deselect_shape(self)
         self._selected_shape:snap()
     else
         self._selected_shape:minimize()
-        local index = find_index(self._shapes, self._selected_shape)
+        local index = Utils.find_index(self._shapes, self._selected_shape)
         self._selected_shape:move((self._rects[index] - self._shapes[index]:center()):split())
     end
 
@@ -63,7 +68,7 @@ function Board:create_shapes()
         self._shapes[#self._shapes + 1] = Shape(shape)
     end
 
-    self._shapes = shuffle(self._shapes)
+    self._shapes = Utils.shuffle(self._shapes)
 end
 
 function Board:reset()
@@ -73,14 +78,14 @@ function Board:reset()
 end
 
 function Board:regen()
-    wipe(self._shapes)
-    wipe(CollidableBlock.blocks)
+    Utils.wipe(self._shapes)
+    Utils.wipe(CollidableBlock.blocks)
     self._selected_shape = nil
     self:create_grid_and_shapes()
 end
 
 function Board:update(dt)
-    check_collisions(CollidableBlock.blocks)
+    Collisions.check_collisions(CollidableBlock.blocks)
     if self._grid:is_complete() then
         if self._on_grid_complete then
             self._on_grid_complete()
@@ -159,3 +164,5 @@ function Board:place_shapes()
         shape:move((self._rects[i] - shape:center()):split())
     end
 end
+
+return Board

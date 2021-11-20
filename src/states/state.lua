@@ -1,4 +1,6 @@
-State = Object:extend()
+local Object = require "src/lib/classic"
+
+local State = Object:extend()
 
 function State:new() end
 function State:draw() end
@@ -12,3 +14,5 @@ function State:update(dt) end
 function State:mouse_moved(x, y, dx, dy, istouch) end
 function State:mouse_pressed(x, y, button, istouch, presses) end
 function State:mouse_released(x, y, button, istouch, presses) end
+
+return State

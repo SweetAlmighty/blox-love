@@ -1,4 +1,6 @@
-Sound = Object:extend()
+local Object = require "src/lib/classic"
+
+local Sound = Object:extend()
 
 local newSource = love.audio.newSource
 
@@ -40,3 +42,5 @@ function Sound:stop()
         self._source = nil
     end
 end
+
+return Sound

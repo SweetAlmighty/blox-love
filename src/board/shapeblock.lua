@@ -1,6 +1,7 @@
-require "src/board/collidableblock"
+local Utils = require "src/utils/util"
+local CollidableBlock = require "src/board/collidableblock"
 
-ShapeBlock = CollidableBlock:extend()
+local ShapeBlock = CollidableBlock:extend()
 
 function ShapeBlock:new(column, row)
     ShapeBlock.super.new(self, CollidableBlock.types.SHAPE, column, row)
@@ -8,8 +9,8 @@ function ShapeBlock:new(column, row)
     self._snap_blocks = {}
     self._unsnap = function(i, v) v:occupied(false) end
     self._distance_sort = function (lhs, rhs)
-        return distance(lhs:translation(), self:translation()) <
-                distance(rhs:translation(), self:translation())
+        return Utils.distance(lhs:translation(), self:translation()) <
+                Utils.distance(rhs:translation(), self:translation())
     end
 end
 
@@ -22,4 +23,6 @@ function ShapeBlock:maximize() self:scale(1) end
 
 function ShapeBlock:minimize() self:scale(0.5) end
 
-function ShapeBlock:unsnap() for_each(self:collisions(), self._unsnap) end
+function ShapeBlock:unsnap() Utils.for_each(self:collisions(), self._unsnap) end
+
+return ShapeBlock

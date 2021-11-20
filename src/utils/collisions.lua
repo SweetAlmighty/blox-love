@@ -1,3 +1,8 @@
+local Utils = require "src/utils/util"
+local Block = require "src/board/block"
+
+local Collisions = { }
+
 local remove = { }
 local collisions = { }
 
@@ -15,8 +20,8 @@ local function handle_collisions(block, collisions)
     local block_collisions = block:collisions()
 
     -- Process new collisions
-    for_each(collisions, function(i, v)
-        if find_index(block_collisions, v) == nil then
+    Utils.for_each(collisions, function(i, v)
+        if Utils.find_index(block_collisions, v) == nil then
             -- Enter
             v:collision_enter(block)
             block:collision_enter(v)
@@ -24,24 +29,24 @@ local function handle_collisions(block, collisions)
     end)
 
     -- Find collisions to remove
-    for_each(block_collisions, function(i, v)
-        if find_index(collisions, v) == nil then
+    Utils.for_each(block_collisions, function(i, v)
+        if Utils.find_index(collisions, v) == nil then
             remove[#remove+1] = v
         end
     end)
 
     -- Process collisions that are no longer valid
-    for_each(remove, function(i, v)
+    Utils.for_each(remove, function(i, v)
         v:collision_exit(block)
         block:collision_exit(v)
     end)
 
-    wipe(remove)
+    Utils.wipe(remove)
 end
 
-function check_collisions(blocks)
-    for_each(blocks, function(i, v)
-        for_each(blocks, function(j, w)
+function Collisions.check_collisions(blocks)
+    Utils.for_each(blocks, function(i, v)
+        Utils.for_each(blocks, function(j, w)
             if i ~= j and (v:type() ~= w:type()) then
                 if check_collision(v, w) then
                     collisions[#collisions+1] = w
@@ -51,6 +56,8 @@ function check_collisions(blocks)
 
         handle_collisions(v, collisions)
 
-        wipe(collisions)
+        Utils.wipe(collisions)
     end)
 end
+
+return Collisions

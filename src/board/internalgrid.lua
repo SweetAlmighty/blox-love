@@ -1,17 +1,20 @@
-require "src/board/internalblock"
+local Utils = require "src/utils/util"
+local Object = require "src/lib/classic"
+local Coordinate = require "src/utils/coordinate"
+local InternalBlock = require "src/board/internalblock"
 
-InternalGrid = Object:extend()
+local InternalGrid = Object:extend()
 
 local function find_next(self, blocks)
     local neighbors = {}
     local next_block = nil
 
     for i = #blocks, 1, -1 do
-        neighbors = shuffle(blocks[i]:get_neighbors())
+        neighbors = Utils.shuffle(blocks[i]:get_neighbors())
         for j = 1, #neighbors do
             next_block = self._blocks[neighbors[j].column][neighbors[j].row]
             if next_block:available() then
-                wipe(neighbors)
+                Utils.wipe(neighbors)
                 return next_block
             end
         end
@@ -70,13 +73,13 @@ function InternalGrid:create_gaps()
             end
         end
 
-        for_each(points, function(i, v)
+        Utils.for_each(points, function(i, v)
             self._gap_count = self._gap_count + 1
             self._blocks[v.column][v.row]:disable()
         end)
 
-        wipe(gap)
-        wipe(points)
+        Utils.wipe(gap)
+        Utils.wipe(points)
     end
 end
 
@@ -90,11 +93,11 @@ function InternalGrid:create_shapes()
             grid_points[#grid_points + 1] = Coordinate(i, j)
         end
     end
-    grid_points = shuffle(grid_points)
+    grid_points = Utils.shuffle(grid_points)
 
     local shapes = {}
     while amount < #grid_points - self._gap_count do
-        for_each(grid_points, function(i, v)
+        Utils.for_each(grid_points, function(i, v)
             local shape = {}
             local block = self._blocks[v.column][v.row]
             if block:available() then
@@ -111,5 +114,7 @@ function InternalGrid:create_shapes()
             end
         end)
     end
-    wipe(grid_points)
+    Utils.wipe(grid_points)
 end
+
+return InternalGrid
