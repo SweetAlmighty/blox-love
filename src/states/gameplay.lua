@@ -18,18 +18,24 @@ local function regen_board(self)
     self._gameui:reset_clicked()
 end
 
-function Gameplay:on_grid_complete()
+local function on_grid_complete(self)
     self._paused = true
     self._win:play()
     UI.create_modal("SUCCESS!", "alert", function() regen_board(self) end)
 end
 
+local function on_settings_clicked(self)
+    if self._paused then state_machine:pop() else
+        state_machine:push(GameStates.Settings)
+    end
+end
+
 function Gameplay:new()
     self._paused = false
     self._win = Resources.load_sfx('Win sound 6')
-    self._board = Board(function() self:on_grid_complete() end)
-    self._music = Resources.load_music('Casual - Level 2 (Loop_01)')
-    self._gameui = GameUI(function() self:on_settings_clicked() end)
+    self._music = Resources.load_music('This should be Funny')
+    self._board = Board(function() on_grid_complete(self) end)
+    self._gameui = GameUI(function() on_settings_clicked(self) end)
 end
 
 function Gameplay:enter()
@@ -45,12 +51,6 @@ end
 function Gameplay:draw()
     Gameplay.super.draw(self)
     self._board:draw()
-end
-
-function Gameplay:on_settings_clicked()
-    if self._paused then state_machine:pop() else
-        state_machine:push(GameStates.Settings)
-    end
 end
 
 function Gameplay:pause()

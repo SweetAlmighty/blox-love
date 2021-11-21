@@ -25,7 +25,7 @@ function love.conf(t)
     t.window.borderless = false         -- Remove all border visuals from the window (boolean)
     t.window.fullscreen = false         -- Enable fullscreen (boolean)
     t.window.usedpiscale = true         -- Enable automatic DPI scaling when highdpi is set to true as well (boolean)
-    t.window.title = "Blox Rework"      -- The window title (string)
+    t.window.title = "Blox"             -- The window title (string)
     t.window.fullscreentype = "desktop" -- Choose between "desktop" fullscreen or "exclusive" fullscreen mode (string)
 
     t.modules.data = false              -- Enable the data module (boolean)
