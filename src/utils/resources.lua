@@ -20,11 +20,14 @@ local image_path = "/data/images/"
 local function image(name) return (image_path .. name .. image_type) end
 
 local audio = {}
-local audio_type = ".wav"
+local wav = ".wav"
+local mp3 = ".mp3"
+local sfx_type = "static"
+local music_type = "stream"
 local sfx_path = "/data/audio/sfx/"
 local music_path = "/data/audio/music/"
-local function sfx(name) return (sfx_path .. name .. audio_type) end
-local function music(name) return (music_path .. name .. audio_type) end
+local function sfx(name, type) return (sfx_path .. name .. type) end
+local function music(name, type) return (music_path .. name .. type) end
 
 local save_data = { }
 
@@ -43,6 +46,18 @@ lf.setIdentity("blox-love")
 local lg = love.graphics
 lg.setDefaultFilter("nearest", "nearest")
 
+local function load_audio(name, ext, type)
+    local path = ""
+    if type == sfx_type then path = sfx(name, ext)
+    elseif type == music_type then path = music(name, ext)
+    end
+
+    if lf.getInfo(path) then
+        audio[name] = Sound(path, type)
+        return audio[name]
+    end
+end
+
 function Resources.load_image(name)
     if Utils:find_index(images, name) then return images[name] end
     local path = image(name)
@@ -50,7 +65,7 @@ function Resources.load_image(name)
         images[name] = lg.newImage(path)
         return images[name]
     end
-    print("Image Error: Image at " .. path .. " could not be found.")
+    error("Image Error: Image at " .. path .. " could not be found.")
 end
 
 function Resources.load_font(name, size)
@@ -60,7 +75,7 @@ function Resources.load_font(name, size)
         fonts[name] = lg.newFont(path, size)
         return fonts[name]
     end
-    print("Font Error: Font at " .. path .. " could not be found.")
+    error("Font Error: Font at " .. path .. " could not be found.")
 end
 
 function Resources.load_data(name)
@@ -70,27 +85,27 @@ function Resources.load_data(name)
         data[name] = json.decode(lf.read(path))
         return data[name]
     end
-    print("Data Error: Data at " .. path .. " could not be found.")
+    error("Data Error: Data at " .. path .. " could not be found.")
 end
 
 function Resources.load_music(name)
     if Utils.find_index(audio, name) then return audio[name] end
-    local path = music(name)
-    if lf.getInfo(path) then
-        audio[name] = Sound(path, "stream")
-        return audio[name]
+    local file = load_audio(name, wav, music_type)
+    if file then return file else
+        file = load_audio(name, mp3, music_type)
+        if file then return file end
     end
-    print("Music Error: Music at " .. path .. " could not be found.")
+    error("Music Error: Music at " .. path .. " could not be found.")
 end
 
 function Resources.load_sfx(name)
     if Utils.find_index(audio, name) then return audio[name] end
-    local path = sfx(name)
-    if lf.getInfo(path) then
-        audio[name] = Sound(path, "static")
-        return audio[name]
+    local file = load_audio(name, wav, sfx_type)
+    if file then return file else
+        file = load_audio(name, mp3, sfx_type)
+        if file then return file end
     end
-    print("SFX Error: SFX at " .. path .. " could not be found.")
+    error("SFX Error: SFX at " .. path .. " could not be found.")
 end
 
 function Resources.set_audio_volume()
@@ -104,7 +119,7 @@ function Resources.save()
     save_data.musicVolume = Sound.musicVolume
 
     local _, error = lf.write(file_name, json.encode(save_data))
-    if error then print("Save Error: " .. error) end
+    if error then error("Save Error: " .. error) end
 end
 
 function Resources.load()
@@ -112,12 +127,12 @@ function Resources.load()
         local info, message = json.decode(lf.read(file_name))
         if message == nil then
             save_data = info
-        else print("Load Error: " .. message) end
+        else error("Load Error: " .. message) end
     else
         save_data = default_save_data
         
         local _, error = lf.write(file_name, json.encode(save_data))
-        if error then print("Save Error: " .. error) end
+        if error then error("Save Error: " .. error) end
     end
 
     Sound.sfxMute = save_data.sfxMute
