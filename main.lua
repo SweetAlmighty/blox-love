@@ -1,4 +1,5 @@
 require "src/lib/gooi"
+local Utils = require "src/utils/utils"
 local UI = require "src/ui/ui"
 local Object = require "src/lib/classic"
 local Resources = require "src/utils/resources"
@@ -25,8 +26,7 @@ function love.mousereleased(x, y, button, istouch, presses)
 end
 
 function love.load()
-    math.randomseed(os.time() + tonumber(tostring({}):sub(8)))
-
+    Utils.seed_rand()
     Resources.load()
     UI.set_start_style()
     state_machine:push(GameStates.MainMenu)

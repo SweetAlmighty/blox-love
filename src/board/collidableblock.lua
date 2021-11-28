@@ -1,4 +1,4 @@
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local Color = require "src/utils/color"
 local Block = require "src/board/block"
 local Vector = require "src/lib/brinevector"

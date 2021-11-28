@@ -34,4 +34,8 @@ function Utils.for_each(table, func)
     for i,v in ipairs(table) do func(i, v) end
 end
 
+function Utils.seed_rand()
+    math.randomseed(os.time() + tonumber(tostring({}):sub(8)))
+end
+
 return Utils

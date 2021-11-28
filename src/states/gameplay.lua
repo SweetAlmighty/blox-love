@@ -49,6 +49,7 @@ function Gameplay:exit()
 end
 
 function Gameplay:draw()
+    love.graphics.clear()
     Gameplay.super.draw(self)
     self._board:draw()
 end

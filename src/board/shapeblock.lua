@@ -1,4 +1,4 @@
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local CollidableBlock = require "src/board/collidableblock"
 
 local ShapeBlock = CollidableBlock:extend()
