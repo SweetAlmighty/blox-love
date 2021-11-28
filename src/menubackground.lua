@@ -1,71 +1,74 @@
 local Object = require "src/lib/classic"
 local Color = require "src/utils/color"
-local Resources = require "src/utils/resources"
-
 local moonshine = require "src/lib/moonshine"
-local box_blur = moonshine(moonshine.effects.boxblur)
-box_blur.boxblur.radius = 5
-
-local start = 0
-local delta = 0
-local rotate = 0
-local offset = -1
-local blocks = {}
-local _color = nil
-local color_index = 1
-local rnd = math.random
-local lg = love.graphics
-local image = Resources.load_image('block')--lg.newImage("block.png")
-local spriteBatch = lg.newSpriteBatch(image)
-local imgWidth, imgHeight = image:getWidth(), image:getHeight()
-local windowWidth, windowHeight = lg.getWidth(), lg.getHeight()
-
-local iw, ih = (imgWidth / 2), (imgHeight / 2)
+local Resources = require "src/utils/resources"
 
 local MenuBackground = Object:extend()
 
-function MenuBackground:new()
-	--self._image = Resources.load_image('block')
-	--self._sprite_batch = lg.newSpriteBatch(image)
+local color_index = 1
+local rnd = math.random
+local lg = love.graphics
+local windowWidth, windowHeight = lg.getWidth(), lg.getHeight()
 
+function MenuBackground:new()
+    self._start = 0
+    self._delta = 0
+    self._rotate = 0
+    self._offset = -1
+    self._blocks = {}
+    self._image = Resources.load_image('block')
+    self._sprite_batch = lg.newSpriteBatch(self._image)
+    self._imgSize = {
+        w = self._image:getWidth(), h = self._image:getHeight(),
+        hw = self._image:getWidth() / 2, hh = self._image:getHeight() / 2
+    }
+
+    self._box_blur = moonshine(moonshine.effects.boxblur)
+    self._box_blur.boxblur.radius = 5
+
+    local color = nil
     for i = 1, 25 do
-        _color = Color.colors[color_index]
+        color = Color.colors[color_index]
         color_index = color_index == #Color.colors and 1 or color_index + 1
-        blocks[#blocks + 1] = {x = rnd(iw, (windowWidth + imgWidth) - iw), y = rnd(ih, windowHeight - ih), color = _color}
+        self._blocks[#self._blocks + 1] = {
+            x = rnd(self._imgSize.hw, (windowWidth + self._imgSize.w) - self._imgSize.hw),
+            y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh),
+            color = color
+        }
     end
 end
 
 function MenuBackground:draw()
-	box_blur(function()
-	    spriteBatch:clear()
+    self._box_blur(function()
+        self._sprite_batch:clear()
 
-	    for i, v in ipairs(blocks) do
-	        spriteBatch:setColor(v.color.r, v.color.g, v.color.b)
-	        spriteBatch:add(v.x, v.y, rotate, 1, 1, imgWidth / 2, imgHeight / 2)
-	    end
+        for i, v in ipairs(self._blocks) do
+            self._sprite_batch:setColor(v.color.r, v.color.g, v.color.b)
+            self._sprite_batch:add(v.x, v.y, self._rotate, 1, 1, self._imgSize.hw, self._imgSize.hh)
+        end
 
-	    love.graphics.draw(spriteBatch)
+        lg.draw(self._sprite_batch)
     end)
 end
 
 function MenuBackground:update(dt)
-    delta = dt * offset
-    rotate = rotate + delta
-    start = math.min(1, math.max(-1, start + delta))
+    self._delta = dt * self._offset
+    self._rotate = self._rotate + self._delta
+    self._start = math.min(1, math.max(-1, self._start + self._delta))
 
-    for i, v in ipairs(blocks) do
-        if v.x < -imgWidth then
-            v.x = windowWidth + imgWidth
-            v.y = rnd(ih, windowHeight - ih)
-        elseif v.x > windowWidth + imgWidth then
-            v.x = -imgWidth
-            v.y = rnd(ih, windowHeight - ih)
+    for i, v in ipairs(self._blocks) do
+        if v.x < -self._imgSize.w then
+            v.x = windowWidth + self._imgSize.w
+            v.y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh)
+        elseif v.x > windowWidth + self._imgSize.w then
+            v.x = -self._imgSize.w
+            v.y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh)
         else
-            v.x = v.x + start
+            v.x = v.x + self._start
         end
     end
 end
 
-function MenuBackground:mousemoved(x, y, dx, dy, istouch) offset = (x - (windowWidth / 2)) / (windowWidth / 2) end
+function MenuBackground:mousemoved(x, y, dx, dy, istouch) self._offset = (x - (windowWidth / 2)) / (windowWidth / 2) end
 
 return MenuBackground
