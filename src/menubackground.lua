@@ -1,5 +1,6 @@
-local Object = require "src/lib/classic"
 local Color = require "src/utils/color"
+local Utils = require "src/utils/utils"
+local Object = require "src/lib/classic"
 local moonshine = require "src/lib/moonshine"
 local Resources = require "src/utils/resources"
 
@@ -8,6 +9,10 @@ local MenuBackground = Object:extend()
 local color_index = 1
 local rnd = math.random
 local lg = love.graphics
+local updatesPerSec = 60
+local nextUpdate = Utils.now()
+local currentTime = Utils.now()
+local skipTicks = 1000/updatesPerSec
 local windowWidth, windowHeight = lg.getWidth(), lg.getHeight()
 
 function MenuBackground:new()
@@ -31,9 +36,9 @@ function MenuBackground:new()
         color = Color.colors[color_index]
         color_index = color_index == #Color.colors and 1 or color_index + 1
         self._blocks[#self._blocks + 1] = {
-            x = rnd(self._imgSize.hw, (windowWidth + self._imgSize.w) - self._imgSize.hw),
+            color = color,
             y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh),
-            color = color
+            x = rnd(self._imgSize.hw, (windowWidth + self._imgSize.w) - self._imgSize.hw)
         }
     end
 end
@@ -52,23 +57,27 @@ function MenuBackground:draw()
 end
 
 function MenuBackground:update(dt)
-    self._delta = dt * self._offset
-    self._rotate = self._rotate + self._delta
-    self._start = math.min(1, math.max(-1, self._start + self._delta))
+    currentTime = Utils.now()
+    if nextUpdate < currentTime then
+        self._delta = 0.01 * self._offset
+        self._rotate = self._rotate + self._delta
+        self._start = math.min(1, math.max(-1, self._start + self._delta))
 
-    for i, v in ipairs(self._blocks) do
-        if v.x < -self._imgSize.w then
-            v.x = windowWidth + self._imgSize.w
-            v.y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh)
-        elseif v.x > windowWidth + self._imgSize.w then
-            v.x = -self._imgSize.w
-            v.y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh)
-        else
-            v.x = v.x + self._start
+        for i, v in ipairs(self._blocks) do
+            if v.x < -self._imgSize.w then
+                v.x = windowWidth + self._imgSize.w
+                v.y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh)
+            elseif v.x > windowWidth + self._imgSize.w then
+                v.x = -self._imgSize.w
+                v.y = rnd(self._imgSize.hh, windowHeight - self._imgSize.hh)
+            else
+                v.x = v.x + self._start
+            end
         end
+        nextUpdate = nextUpdate + skipTicks
     end
 end
 
-function MenuBackground:mousemoved(x, y, dx, dy, istouch) self._offset = (x - (windowWidth / 2)) / (windowWidth / 2) end
+function MenuBackground:mouse_moved(x, y, dx, dy, istouch) self._offset = (x - (windowWidth / 2)) / (windowWidth / 2) end
 
 return MenuBackground

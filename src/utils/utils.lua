@@ -2,6 +2,8 @@ local Object = require "src/lib/classic"
 
 local Utils = {}
 
+local timer = love.timer
+
 function Utils.distance(p1, p2)
     local dx = p1.x - p2.x
     local dy = p1.y - p2.y
@@ -18,6 +20,7 @@ function Utils.shuffle(list)
     return shuffled
 end
 
+function Utils.now() return timer.getTime() * 1000 end
 function Utils.for_each(table, func) for i, v in ipairs(table) do func(i, v) end end
 function Utils.move(tbl, new, old) table.insert(tbl, new, table.remove(tbl, old)) end
 function Utils.wipe(table) Utils.for_each(table, function(i, v) table[i] = nil end) end
