@@ -8,7 +8,6 @@ local Vector = require "src/lib/brinevector"
 local Shape = Object:extend()
 
 local color_index = 1
-
 local lg = love.graphics
 
 local function get_block(pos)
@@ -47,26 +46,32 @@ local function has_valid_collisions(self)
     return #collisions == #self._blocks
 end
 
+local function determine_valid_collisions(self)
+    local snap_points = {}
+    for _, snap_block in ipairs(self._blocks[1]:get_snap_blocks()) do
+        for _, block in ipairs(self._blocks) do
+            local next = get_block(snap_block:coords() + (block:coords() - self._blocks[1]:coords()))
+
+            if next == nil or next:occupied() then
+                snap_points = {}
+                break
+            end
+
+            snap_points[#snap_points + 1] = next
+        end
+
+        if #snap_points ~= 0 then break end
+    end
+    return snap_points
+end
+
 local function determine_snap_points(self)
     set_grid_block_colors(self, false)
 
-    self._snap_points = {}
+    Utils.wipe(self._snap_points)
 
     if has_valid_collisions(self) then
-        for _, snap_block in ipairs(self._blocks[1]:get_snap_blocks()) do
-            for _, block in ipairs(self._blocks) do
-                local next = get_block(snap_block:coords() + (block:coords() - self._blocks[1]:coords()))
-
-                if next == nil or next:occupied() then
-                    self._snap_points = {}
-                    break
-                end
-
-                self._snap_points[#self._snap_points + 1] = next
-            end
-
-            if #self._snap_points ~= 0 then break end
-        end
+        self._snap_points = determine_valid_collisions(self)
     end
 
     set_grid_block_colors(self, true)
@@ -96,14 +101,6 @@ function Shape:new(blocks)
 
     Utils.for_each(self._blocks, function(i,v) v:color(self._color) end)
 end
-
-function Shape:snapped() return self._snapped end
-
-function Shape:block_count() return #self._blocks end
-
-function Shape:get_block(index) return self._blocks[index] end
-
-function Shape:attempt_snap() return has_valid_collisions(self) end
 
 function Shape:draw()
     self._sprite_batch:clear()
@@ -188,5 +185,10 @@ function Shape:center()
     Utils.for_each(self._blocks, function(i, v) pos = pos + v:center() end)
     return pos / #self._blocks
 end
+
+function Shape:snapped() return self._snapped end
+function Shape:block_count() return #self._blocks end
+function Shape:get_block(index) return self._blocks[index] end
+function Shape:attempt_snap() return #self._snap_points == #self._blocks end
 
 return Shape
