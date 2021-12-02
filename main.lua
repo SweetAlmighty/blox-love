@@ -1,6 +1,6 @@
 require "src/lib/gooi"
-local Utils = require "src/utils/utils"
 local UI = require "src/ui/ui"
+local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local Resources = require "src/utils/resources"
 local StateMachine = require "src/states/statemachine"
