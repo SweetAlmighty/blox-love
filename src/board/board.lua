@@ -1,5 +1,5 @@
 local Grid = require "src/board/grid"
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local Shape = require "src/board/shape"
 local Object = require "src/lib/classic"
 local Layout = require "src/board/layout"

@@ -31,21 +31,13 @@ function Layout:draw()
     lg.setColor(1, 1, 1)
 end
 
-function Layout:resize()
-    NLay.update(lw.getSafeArea())
-end
-
-function Layout:get_grid_rect()
-    return self.grid:get()
-end
-
 function Layout:get_grid_center()
     local x, y, w, h = self.grid:get()
     return Vector(x + (w / 2), y + (h / 2))
 end
 
-function Layout:get_side_rect()
-    return self.side:get()
-end
+function Layout:resize() NLay.update(lw.getSafeArea()) end
+function Layout:get_grid_rect() return self.grid:get() end
+function Layout:get_side_rect() return self.side:get() end
 
 return Layout

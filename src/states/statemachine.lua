@@ -5,8 +5,9 @@ local Settings = require "src/states/settings"
 local Gameplay = require "src/states/gameplay"
 local MainMenu = require "src/states/mainmenu"
 local Resources = require "src/utils/resources"
+local SplashScreen = require "src/states/splashscreen"
 
-GameStates = { MainMenu = 2, Gameplay = 3, Settings = 4 }
+GameStates = { SplashScreen = 1, MainMenu = 2, Gameplay = 3, Settings = 4 }
 
 local StateMachine = Object:extend()
 
@@ -34,6 +35,7 @@ end
 function StateMachine:push(type)
     local state = nil
     if type == GameStates.Settings then state = Settings()
+    elseif type == GameStates.SplashScreen then state = SplashScreen()
     elseif type == GameStates.MainMenu then state = MainMenu()
     elseif type == GameStates.Gameplay then state = Gameplay()
     end

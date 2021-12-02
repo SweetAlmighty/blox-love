@@ -1,4 +1,4 @@
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local CollidableBlock = require "src/board/collidableblock"
 
 local ShapeBlock = CollidableBlock:extend()
@@ -20,9 +20,7 @@ function ShapeBlock:get_snap_blocks()
 end
 
 function ShapeBlock:maximize() self:scale(1) end
-
 function ShapeBlock:minimize() self:scale(0.5) end
-
 function ShapeBlock:unsnap() Utils.for_each(self:collisions(), self._unsnap) end
 
 return ShapeBlock

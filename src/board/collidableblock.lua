@@ -1,4 +1,4 @@
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local Color = require "src/utils/color"
 local Block = require "src/board/block"
 local Vector = require "src/lib/brinevector"
@@ -25,14 +25,6 @@ function CollidableBlock:new(type, column, row)
 
     CollidableBlock.blocks[#CollidableBlock.blocks + 1] = self
 end
-
-function CollidableBlock:type() return self._type end
-
-function CollidableBlock:collisions() return self._collisions end
-
-function CollidableBlock:translation() return self._translated_position end
-
-function CollidableBlock:center() return self:translation() + self._offset end
 
 function CollidableBlock:reset_collisions()
     Utils.for_each(self._collisions, function(i, v) self:collision_exit(v) end)
@@ -88,5 +80,10 @@ function CollidableBlock:check_bounds(x, y)
         end
     end
 end
+
+function CollidableBlock:type() return self._type end
+function CollidableBlock:collisions() return self._collisions end
+function CollidableBlock:translation() return self._translated_position end
+function CollidableBlock:center() return self:translation() + self._offset end
 
 return CollidableBlock

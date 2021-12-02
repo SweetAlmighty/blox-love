@@ -1,4 +1,4 @@
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local Coordinate = require "src/utils/coordinate"
 local InternalBlock = require "src/board/internalblock"

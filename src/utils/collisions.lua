@@ -1,4 +1,4 @@
-local Utils = require "src/utils/util"
+local Utils = require "src/utils/utils"
 local Block = require "src/board/block"
 
 local Collisions = { }
