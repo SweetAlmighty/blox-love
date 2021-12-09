@@ -3,9 +3,9 @@ local Block = require "src/board/block"
 
 local Collisions = { }
 
-local _block = nil
 local remove = { }
 local collisions = { }
+local local_block = nil
 local block_collisions = { }
 
 local function check_collision(a, b)
@@ -20,8 +20,8 @@ end
 
 local function process_new_collisions(i, v)
     if Utils.find_index(block_collisions, v) == nil then
-        v:collision_enter(_block)
-        _block:collision_enter(v)
+        v:collision_enter(local_block)
+        local_block:collision_enter(v)
     end
 end
 
@@ -32,21 +32,16 @@ local function find_collisions_to_remove(i, v)
 end
 
 local function process_obsolete_collisions(i, v)
-    v:collision_exit(_block)
-    _block:collision_exit(v)
+    v:collision_exit(local_block)
+    local_block:collision_exit(v)
 end
 
 local function handle_collisions(block)
-    _block = block
+    local_block = block
     block_collisions = block:collisions()
 
-    -- Process new collisions
     Utils.for_each(collisions, process_new_collisions)
-
-    -- Find collisions to remove
     Utils.for_each(block_collisions, find_collisions_to_remove)
-
-    -- Process collisions that are no longer valid
     Utils.for_each(remove, process_obsolete_collisions)
 
     Utils.wipe(remove)

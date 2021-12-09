@@ -1,6 +1,6 @@
+local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local State = require "src/states/state"
-local Utils = require "src/utils/utils"
 local Settings = require "src/states/settings"
 local Gameplay = require "src/states/gameplay"
 local MainMenu = require "src/states/mainmenu"
