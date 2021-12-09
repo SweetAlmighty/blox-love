@@ -5,6 +5,8 @@ local InternalBlock = require "src/board/internalblock"
 
 local InternalGrid = Object:extend()
 
+local random = love.math.random
+
 local function find_next(self, blocks)
     local neighbors = {}
     local next_block = nil
@@ -49,8 +51,8 @@ function InternalGrid:get_block(column, row) return self._blocks[column][row] en
 
 function InternalGrid:create_gaps()
     -- Determine whether this grid will contain gaps
-    if love.math.random() > 0.5 then
-        local that = love.math.random(1, #self._blocks / 2)
+    if random() > 0.5 then
+        local that = random(1, #self._blocks / 2)
         local row = that % self._rows
         local column = math.ceil(that / self._columns)
 
@@ -66,7 +68,7 @@ function InternalGrid:create_gaps()
         end
 
         -- Create symmetrical gaps
-        if love.math.random() > 0.5 then
+        if random() > 0.5 then
             for _, block in ipairs(gap) do
                 -- Adding 1 to Rows and Columns since lua indices start at 1
                 points[#points + 1] = Coordinate((self._columns + 1) - block:column(), (self._rows + 1) - block:row())

@@ -9,6 +9,9 @@ local style = {
 
 local buttonPress = Resources.load_sfx('Switch sounds 2')
 
+local getWidth = love.graphics.getWidth
+local getHeight = love.graphics.getHeight
+
 function UI.set_start_style() gooi.setStyle(style) end
 
 function UI.icon_path(name) return "data/images/" .. name .. ".png" end
@@ -42,10 +45,10 @@ end
 function UI.create_modal(text, style, ok)
     buttonPress:play()
     gooi.panelDialog = UI.create_panel("", {
-	    x = love.graphics.getWidth()/2.67,
-	    y = love.graphics.getHeight()/3,
-	    w = love.graphics.getWidth()/4,
-	    h = love.graphics.getHeight()/3
+	    x = getWidth()/2.67,
+	    y = getHeight()/3,
+	    w = getWidth()/4,
+	    h = getHeight()/3
 	}, "grid", 3, 3):setOpaque(true):warning()
 
 	local cancel = function()

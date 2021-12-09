@@ -7,8 +7,10 @@ local Vector = require "src/lib/brinevector"
 
 local Shape = Object:extend()
 
+local pos = nil
 local color_index = 1
-local lg = love.graphics
+local newTransform = love.math.newTransform
+local newSpriteBatch = love.graphics.newSpriteBatch
 
 local function get_block(pos)
     if pos.row > 0 and pos.row <= Grid.rows then
@@ -85,9 +87,9 @@ function Shape:new(blocks)
     self._snapped = false
     self._blocks = blocks
     self._snap_points = {}
+    self._transform = newTransform()
     self._color = Color.colors[color_index]
-    self._transform = love.math.newTransform()
-    self._sprite_batch = lg.newSpriteBatch(Block.texture)
+    self._sprite_batch = newSpriteBatch(Block.texture)
     color_index = color_index == #Color.colors and 1 or color_index + 1
 
     self:minimize()
@@ -102,16 +104,12 @@ function Shape:new(blocks)
     Utils.for_each(self._blocks, function(i,v) v:color(self._color) end)
 end
 
-function Shape:draw()
-    self._sprite_batch:clear()
-
-    self._sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
+function Shape:draw(sprite_batch)
+    sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
     Utils.for_each(self._blocks, function(i, v)
-        local pos = v:translation()
-        self._sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
+        pos = v:translation()
+        sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
     end)
-
-    lg.draw(self._sprite_batch)
 end
 
 function Shape:move(dx, dy)
@@ -181,9 +179,9 @@ function Shape:selected(x, y)
 end
 
 function Shape:center()
-    local pos = Vector()
-    Utils.for_each(self._blocks, function(i, v) pos = pos + v:center() end)
-    return pos / #self._blocks
+    local _pos = Vector()
+    Utils.for_each(self._blocks, function(i, v) _pos = _pos + v:center() end)
+    return _pos / #self._blocks
 end
 
 function Shape:snapped() return self._snapped end

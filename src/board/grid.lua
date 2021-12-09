@@ -5,15 +5,19 @@ local InternalGrid = require "src/board/internalgrid"
 
 local Grid = Object:extend()
 
+local random = love.math.random
+local newTransform = love.math.newTransform
+local newSpriteBatch = love.graphics.newSpriteBatch
+
 function Grid:new(center)
     self._shapes = {}
     self._blocks = {}
     self._center = center
-    Grid.rows = math.random(4, 8)
-    Grid.columns = math.random(4, 8)
-    self._transform = love.math.newTransform()
+    Grid.rows = random(4, 8)
+    Grid.columns = random(4, 8)
+    self._transform = newTransform()
+    self._sprite_batch = newSpriteBatch(Block.texture)
     self._internal_grid = InternalGrid(Grid.columns, Grid.rows)
-    self._sprite_batch = love.graphics.newSpriteBatch(Block.texture)
 
     self:initialize()
 end
@@ -48,17 +52,13 @@ end
 
 function Grid:get_shapes() return self._internal_grid:get_shapes() end
 
-function Grid:draw()
-    self._sprite_batch:clear()
-
+function Grid:draw(sprite_batch)
     for _, column in ipairs(self._blocks) do
         for _, row in pairs(column) do
-            self._sprite_batch:setColor(row:color():split())
-            self._sprite_batch:add(row:translation():split())
+            sprite_batch:setColor(row:color():split())
+            sprite_batch:add(row:translation():split())
         end
     end
-
-    love.graphics.draw(self._sprite_batch)
 end
 
 function Grid:is_complete()
