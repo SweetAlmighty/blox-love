@@ -86,7 +86,6 @@ function InternalGrid:create_gaps()
 end
 
 function InternalGrid:create_shapes()
-    local amount = 0
     self._shapes = {}
 
     local grid_points = {}
@@ -97,6 +96,7 @@ function InternalGrid:create_shapes()
     end
     grid_points = Utils.shuffle(grid_points)
 
+    local amount = 0
     local shapes = {}
     while amount < #grid_points - self._gap_count do
         Utils.for_each(grid_points, function(i, v)
