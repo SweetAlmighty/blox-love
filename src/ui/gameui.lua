@@ -2,6 +2,9 @@ local Object = require "src/lib/classic"
 
 local GameUI = Object:extend()
 
+local getWidth = love.graphics.getWidth
+local getHeight = love.graphics.getHeight
+
 local function set_icon(self)
     self._settings:setIcon("data/images/" .. (self._clicked and "cross" or "gear") .. ".png")
 end
@@ -20,8 +23,8 @@ function GameUI:new(on_settings_clicked)
         x = 0,
         y = 0,
         layout = "game",
-        w = love.graphics.getWidth(),
-        h = love.graphics.getHeight()
+        w = getWidth(),
+        h = getHeight()
     })
 
     self._layout:add(self._settings, "t-r")

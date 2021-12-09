@@ -1,6 +1,6 @@
+local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local State = require "src/states/state"
-local moonshine = require "src/lib/moonshine"
 local Settings = require "src/states/settings"
 local Gameplay = require "src/states/gameplay"
 local MainMenu = require "src/states/mainmenu"
@@ -11,13 +11,11 @@ GameStates = { SplashScreen = 1, MainMenu = 2, Gameplay = 3, Settings = 4 }
 
 local StateMachine = Object:extend()
 
-local box_blur = moonshine(moonshine.effects.boxblur)
-box_blur.boxblur.radius = 5
-
 function StateMachine:new()
     self._stack = { }
     self._back = Resources.load_sfx('Go back sounds 5')
     self._forward = Resources.load_sfx('Go forward sounds 1')
+    self._draw_previous_state = function() self._stack[#self._stack-1]:draw() end
 end
 
 function StateMachine:pop()
@@ -52,10 +50,8 @@ function StateMachine:push(type)
 end
 
 function StateMachine:draw()
-    if #self._stack > 1 then
-        box_blur(function()
-            self._stack[#self._stack-1]:draw()
-        end)
+    if #self._stack > GameStates.MainMenu then
+        Utils.blur(self._draw_previous_state)
     end
 
     self._stack[#self._stack]:draw()

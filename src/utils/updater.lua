@@ -6,8 +6,8 @@ local Updater = Object:extend()
 function Updater:new(updates_per_sec, func)
 	self._func = func
 	self._now = Utils.now
-	self._next_update = self:_now()
-	self._current_time = self:_now()
+	self._next_update = self._now()
+	self._current_time = self._now()
 	self._skip_ticks = 1000/updates_per_sec
 end
 
@@ -17,6 +17,11 @@ function Updater:update()
     	self._func()
         self._next_update = self._next_update + self._skip_ticks
     end
+end
+
+function Updater:reset()
+	self._next_update = self._now()
+	self._current_time = self._now()
 end
 
 return Updater

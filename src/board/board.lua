@@ -1,5 +1,6 @@
 local Grid = require "src/board/grid"
 local Utils = require "src/utils/utils"
+local Block = require "src/board/block"
 local Shape = require "src/board/shape"
 local Object = require "src/lib/classic"
 local Layout = require "src/board/layout"
@@ -10,6 +11,9 @@ local Collisions = require "src/utils/collisions"
 local CollidableBlock = require "src/board/collidableblock"
 
 local Board = Object:extend()
+
+local draw = love.graphics.draw
+local newSpriteBatch = love.graphics.newSpriteBatch
 
 local function select_shape(self, shape)
     self._shape_interaction:play()
@@ -40,6 +44,7 @@ function Board:new(on_grid_complete)
     self._shapes = {}
     self._layout = Layout()
     self._on_grid_complete = on_grid_complete
+    self._sprite_batch = newSpriteBatch(Block.texture)
     self._shape_interaction = Resources.load_sfx("Switch sounds 1")
 
     self:create_grid_and_shapes()
@@ -95,17 +100,21 @@ end
 
 function Board:draw()
     self._layout:draw()
-    self._grid:draw()
+
+    self._sprite_batch:clear()
+    self._grid:draw(self._sprite_batch)
 
     for i = #self._shapes, 1, -1 do
         if self._shapes[i] ~= self._selected_shape then
-            self._shapes[i]:draw()
+            self._shapes[i]:draw(self._sprite_batch)
         end
     end
 
     if self._selected_shape ~= nil then
-        self._selected_shape:draw()
+        self._selected_shape:draw(self._sprite_batch)
     end
+
+    draw(self._sprite_batch)
 end
 
 function Board:mouse_moved(dx, dy)
