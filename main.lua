@@ -1,17 +1,13 @@
 require "src/lib/gooi"
-local UI = require "src/ui/ui"
 local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local Resources = require "src/utils/resources"
 local StateMachine = require "src/states/statemachine"
 
-state_machine = StateMachine()
-
 function love.load()
     Utils.seed_rand()
     Resources.load()
-    UI.set_start_style()
-    state_machine:push(GameStates.MainMenu)
+    state_machine = StateMachine()
 end
 
 function love.draw() state_machine:draw() end

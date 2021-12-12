@@ -1,5 +1,5 @@
 local UI = require "src/ui/ui"
-local GameUI = require "src/ui/gameui"
+local Utils = require "src/utils/utils"
 local Board = require "src/board/board"
 local State = require "src/states/state"
 local Resources = require "src/utils/resources"
@@ -8,77 +8,70 @@ local Gameplay = State:extend()
 
 local draw = love.graphics.draw
 
-local function reset_board(self)
-    self._board:reset()
-    self._paused = false
-    self._gameui:reset_clicked()
-end
-
-local function regen_board(self)
-    self._board:regen()
-    self._paused = false
-    self._gameui:reset_clicked()
-end
-
-local function on_grid_complete(self)
-    self._win:play()
-    self._paused = true
-    UI.create_modal("SUCCESS!", "alert", function() regen_board(self) end)
-end
-
-local function on_settings_clicked(self)
-    if self._paused then state_machine:pop() else
-        state_machine:push(GameStates.Settings)
-    end
-end
-
 function Gameplay:new()
-    self._paused = false
+    self._pause = false
+    self._type = State.GameStates.Gameplay
     self._win = Resources.load_sfx('Win sound 6')
     self._background = Resources.load_image('scifi_main_menu')
-    self._board = Board(function() on_grid_complete(self) end)
-    self._gameui = GameUI(function() on_settings_clicked(self) end)
+
+    local on_win = function()
+        self._pause = false
+        self._board:regen()
+    end
+
+    local function show_settings(visible)
+        self._settings:setVisible(visible)
+    end
+
+    local on_complete = function()
+        self._win:play()
+        self._pause = true
+        UI.grid_complete_modal(on_win)
+    end
+
+    local on_regen = function() self._board:regen() end
+    local on_reset = function() self._board:reset() end
+
+    self._draw = function()
+        draw(self._background, 0, 0)
+        self._board:draw()
+    end
+
+    self._is_paused = function()
+        return self._settings.visible or self._pause
+    end
+
+    self._board = Board(on_complete)
+    self._ui = UI.game_ui(show_settings)
+    self._settings = UI.game_settings(on_reset, on_regen)
 end
 
 function Gameplay:draw()
-    draw(self._background, 0, 0)
-    self._board:draw()
-end
-
-function Gameplay:pause()
-    self._paused = true
-    Gameplay.on_regen = function() regen_board(self) end
-    Gameplay.on_reset = function() reset_board(self) end
-end
-
-function Gameplay:unpause()
-    self._paused = false
-    Gameplay.on_regen = nil
-    Gameplay.on_reset = nil
+    if self._is_paused() then Utils.blur(self._draw)
+    else self._draw() end
 end
 
 function Gameplay:update(dt)
     Gameplay.super.update(self, dt)
-    if not self._paused then self._board:update(dt) end
+    if not self._is_paused() then self._board:update(dt) end
 end
 
 function Gameplay:mouse_moved(x, y, dx, dy, istouch)
     Gameplay.super.mouse_moved(self, x, y, dx, dy, istouch)
-    if not self._paused then self._board:mouse_moved(dx, dy) end
+    if not self._is_paused() then self._board:mouse_moved(dx, dy) end
 end
 
 function Gameplay:mouse_pressed(x, y, button, istouch, presses)
     Gameplay.super.mouse_pressed(self, x, y, button, istouch, presses)
-    if not self._paused then self._board:mouse_pressed(x, y) end
+    if not self._is_paused() then self._board:mouse_pressed(x, y) end
 end
 
 function Gameplay:mouse_released(x, y, button, istouch, presses)
     Gameplay.super.mouse_released(self, x, y, button, istouch, presses)
-    if not self._paused then self._board:mouse_released() end
+    if not self._is_paused() then self._board:mouse_released() end
 end
 
+function Gameplay:type() return self._type end
 function Gameplay:resize() self._board:resize() end
-function Gameplay:enter() self._gameui:set_visible(true) end
-function Gameplay:exit() self._gameui:set_visible(false) end
 
 return Gameplay

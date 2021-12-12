@@ -83,12 +83,12 @@ local function difference(self)
     return (self._snap_points[1]:translation() - self._blocks[1]:translation()):split()
 end
 
-local function add_to_batch(i, v)
+local function add_to_batch(self, i, v)
     pos = v:translation()
-    sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
+    self._sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
 end
 
-local function move_blocks(i, v)
+local function move_blocks(self, i, v)
     v:set_translation(self._transform:transformPoint(v:position():split()))
 end
 
@@ -98,7 +98,8 @@ function Shape:new(blocks)
     self._snap_points = {}
     self._transform = newTransform()
     self._color = Color.colors[color_index]
-    self._sprite_batch = newSpriteBatch(Block.texture)
+    self._move_blocks = function(i, v) move_blocks(self, i, v) end
+    self._add_to_batch = function(i, v) add_to_batch(self, i, v) end
     color_index = color_index == #Color.colors and 1 or color_index + 1
 
     self:minimize()
@@ -114,15 +115,14 @@ function Shape:new(blocks)
 end
 
 function Shape:draw(sprite_batch)
+    if self._sprite_batch == nil then self._sprite_batch = sprite_batch end
     sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
-    Utils.for_each(self._blocks, add_to_batch)
+    Utils.for_each(self._blocks, self._add_to_batch)
 end
 
 function Shape:move(dx, dy)
     self._transform = self._transform:translate(dx/self._scale, dy/self._scale)
-
-    Utils.for_each(self._blocks, move_blocks)
-
+    Utils.for_each(self._blocks, self._move_blocks)
     determine_snap_points(self)
 end
 

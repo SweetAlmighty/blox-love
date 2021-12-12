@@ -5,52 +5,44 @@ local MenuBackground = require "src/menubackground"
 
 local MainMenu = State:extend()
 
-local getWidth = love.graphics.getWidth
-local getHeight = love.graphics.getHeight
-
-local function on_exit()
-    Resources.save()
-    love.event.quit()
-end
-
-local function on_play_released() state_machine:push(GameStates.Gameplay) end
-local function on_exit_released() UI.create_modal("Exit Blox?", "modal", on_exit) end
-
 function MainMenu:new()
     MainMenu.super.new(self)
+    self._menu = UI.main_menu()
+    self._settings = UI.main_settings()
+    self._type = State.GameStates.MainMenu
     self._menu_background = MenuBackground()
     self._music = Resources.load_music('This should be Funny')
-    self._layout = UI.create_panel("BLOX", {x = 0, y = 0, w = getWidth(), h = getHeight()}, "grid", 5, 3)
-    self._layout:add(UI.create_button("PLAY", nil, on_play_released), "3,2")
-    self._layout:add(UI.create_button("EXIT", nil, on_exit_released), "4,2")
+    self._ui = UI.game_ui(function(vis)
+        self._settings:setVisible(vis)
+        self._menu.sons[2].ref:setVisible(not vis)
+        self._menu.sons[3].ref:setVisible(not vis)
+    end)
 end
 
-function MainMenu:update(dt)
-    self._menu_background:update()
-end
-
-function MainMenu:draw()
-    MainMenu.super.draw()
-    self._menu_background:draw()
-end
+function MainMenu:type() return self._type end
+function MainMenu:draw() self._menu_background:draw() end
+function MainMenu:update(dt) self._menu_background:update() end
 
 function MainMenu:mouse_moved(x, y, dx, dy, istouch)
     self._menu_background:mouse_moved(x, y, dx, dy, istouch)
 end
 
 function MainMenu:pause()
-    self._layout:setVisible(false)
+    self._ui:setVisible(false)
+    self._menu:setVisible(false)
     self._menu_background:unpause()
 end
 
 function MainMenu:unpause()
-    self._layout:setVisible(true)
+    self._ui:setVisible(true)
+    self._menu:setVisible(true)
     self._menu_background:unpause()
 end
 
 function MainMenu:enter()
     self._music:play_looping()
-    self._layout:setVisible(true)
+    self._ui:setVisible(true)
+    self._menu:setVisible(true)
 end
 
 return MainMenu
