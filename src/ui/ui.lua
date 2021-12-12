@@ -81,7 +81,6 @@ local function create_panel(title, info, type, width, height)
 end
 
 local function create_modal(text, style, ok)
-    buttonPress:play()
     gooi.panelDialog = create_panel("", {
 	    x = getWidth()/2.67,
 	    y = getHeight()/3,
@@ -209,6 +208,7 @@ function UI.game_settings(on_reset, on_regen)
    	end
 
 	local function on_home_release()
+		buttonPress:play()
 	    create_modal("Return Home?", "modal", function()
 	    	on_press()
 	        state_machine:pop()
@@ -216,6 +216,7 @@ function UI.game_settings(on_reset, on_regen)
 	end
 
 	local function on_reset_release()
+		buttonPress:play()
 	    create_modal("Reset?", "modal", function()
 	    	on_press()
 	        if on_reset ~= nil then on_reset() end
@@ -223,6 +224,7 @@ function UI.game_settings(on_reset, on_regen)
 	end
 
 	local function on_skip_release()
+		buttonPress:play()
 	    create_modal("Skip?", "modal", function()
 	    	on_press()
 	        if on_regen ~= nil then on_regen() end
