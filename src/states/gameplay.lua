@@ -63,12 +63,12 @@ end
 
 function Gameplay:mouse_pressed(x, y, button, istouch, presses)
     Gameplay.super.mouse_pressed(self, x, y, button, istouch, presses)
-    if not self._is_paused() then self._board:mouse_pressed(x, y) end
+    if not self._is_paused() and button == 1 then self._board:mouse_pressed(x, y) end
 end
 
 function Gameplay:mouse_released(x, y, button, istouch, presses)
     Gameplay.super.mouse_released(self, x, y, button, istouch, presses)
-    if not self._is_paused() then self._board:mouse_released() end
+    if not self._is_paused() and button == 1 then self._board:mouse_released() end
 end
 
 function Gameplay:type() return self._type end
