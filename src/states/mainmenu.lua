@@ -21,7 +21,7 @@ end
 
 function MainMenu:type() return self._type end
 function MainMenu:draw() self._menu_background:draw() end
-function MainMenu:update(dt) self._menu_background:update() end
+function MainMenu:update(dt) self._menu_background:update(dt) end
 
 function MainMenu:mouse_moved(x, y, dx, dy, istouch)
     self._menu_background:mouse_moved(x, y, dx, dy, istouch)

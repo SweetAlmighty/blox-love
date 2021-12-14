@@ -7,15 +7,20 @@ local Resources = require "src/utils/resources"
 
 local MenuBackground = Object:extend()
 
+local speed = 50
 local color_index = 1
 local random = love.math.random
 local draw = love.graphics.draw
+local position = {x = 0, y = 0}
 local getWidth = love.graphics.getWidth
 local getHeight = love.graphics.getHeight
+local joysticks = love.joystick.getJoysticks()
+local joystick = joysticks[#joysticks]
 local newSpriteBatch = love.graphics.newSpriteBatch
 local windowWidth, windowHeight = getWidth(), getHeight()
 
 local function rand_y(self) return random(-self._image_size.h, windowHeight + self._image_size.h) end
+local function clamp_offset(value) return Utils.clamp((value - (windowWidth / 2)) / (windowWidth / 2), -1, 1) end
 local function rand_pos(self) return random(-self._image_size.w, windowWidth + self._image_size.w), rand_y(self) end
 
 local function initialize_blocks(self)
@@ -59,7 +64,7 @@ function MenuBackground:new()
     self._delta = 0
     self._scale = 5
     self._rotate = 0
-    self._offset = -1
+    self._offset = 0
     self._image = Resources.load_image('block')
     self._sprite_batch = newSpriteBatch(self._image)
     self._draw_blocks = function() draw_blocks(self) end
@@ -74,9 +79,21 @@ function MenuBackground:new()
     initialize_blocks(self)
 end
 
+function MenuBackground:update(dt)
+    self._updater:update()
+
+    if joystick then
+        _, axis2 = joystick:getAxes()
+        position.y = position.y + axis2 * speed
+        self._offset = clamp_offset(position.y)
+    end
+end
+
+function MenuBackground:mouse_moved(x, y, dx, dy, istouch)
+    if joystick == nil then self._offset = clamp_offset(x) end
+end
+
 function MenuBackground:unpause() self._updater:reset() end
-function MenuBackground:update(dt) self._updater:update() end
 function MenuBackground:draw() Utils.blur(self._draw_blocks) end
-function MenuBackground:mouse_moved(x, y, dx, dy, istouch) self._offset = (x - (windowWidth / 2)) / (windowWidth / 2) end
 
 return MenuBackground
