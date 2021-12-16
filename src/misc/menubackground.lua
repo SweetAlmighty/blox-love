@@ -1,4 +1,4 @@
-local Color = require "src/utils/color"
+local Color = require "src/misc/color"
 local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local Updater = require "src/utils/updater"
@@ -77,7 +77,7 @@ function MenuBackground:new()
     initialize_blocks(self)
 end
 
-function MenuBackground:update(dt)
+function MenuBackground:update()
     self._updater:update()
 
     if self._joystick then

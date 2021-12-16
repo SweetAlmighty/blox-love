@@ -1,6 +1,6 @@
 local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
-local Coordinate = require "src/utils/coordinate"
+local Coordinate = require "src/misc/coordinate"
 local InternalBlock = require "src/board/internalblock"
 
 local InternalGrid = Object:extend()

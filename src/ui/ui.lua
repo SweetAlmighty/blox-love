@@ -1,4 +1,4 @@
-local Sound = require "src/utils/sound"
+local Sound = require "src/misc/sound"
 local State = require "src/states/state"
 local Resources = require "src/utils/resources"
 

@@ -1,6 +1,6 @@
 local Object = require "src/lib/classic"
 local Resources = require "src/utils/resources"
-local Coordinate = require "src/utils/coordinate"
+local Coordinate = require "src/misc/coordinate"
 
 local Block = Object:extend()
 
