@@ -52,13 +52,13 @@ end
 function MenuBackground:new()
     self._delta = 0
     self._rotate = 0
-    self._scalar = 0
     self._offset = 0
     self._blocks = {}
+    self._scalar = -1
     self._img_scale = 5
     self._color_index = 1
+    self._horizontal_pos = 0
     self._accelerometer_scalar = 100
-    self._horizontal_pos = windowWidth/2
     self._image = Resources.load_image('block')
     self._draw_blocks = function() draw_blocks(self) end
     self._sprite_batch = love.graphics.newSpriteBatch(self._image)
@@ -80,8 +80,8 @@ end
 function MenuBackground:update(dt)
     self._updater:update()
 
-    if joystick then
-        _, axis2 = joystick:getAxes()
+    if self._joystick then
+        _, axis2 = self._joystick:getAxes()
         self._horizontal_pos = self._horizontal_pos + (axis2 * self._accelerometer_scalar)
         self._horizontal_pos = Utils.clamp(self._horizontal_pos, 0, windowWidth)
         self._scalar = clamp_scalar(self._horizontal_pos)
@@ -90,6 +90,6 @@ end
 
 function MenuBackground:unpause() self._updater:reset() end
 function MenuBackground:draw() Utils.blur(self._draw_blocks) end
-function MenuBackground:mouse_moved(x, y, dx, dy, istouch) self._scalar = clamp_scalar(x) end
+function MenuBackground:mouse_moved(x, y, dx, dy, istouch) if not self._joystick then self._scalar = clamp_scalar(x) end end
 
 return MenuBackground
