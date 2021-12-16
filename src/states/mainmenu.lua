@@ -1,7 +1,7 @@
 local UI = require "src/ui/ui"
 local State = require "src/states/state"
 local Resources = require "src/utils/resources"
-local MenuBackground = require "src/menubackground"
+local MenuBackground = require "src/misc/menubackground"
 
 local MainMenu = State:extend()
 

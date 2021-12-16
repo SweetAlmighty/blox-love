@@ -1,6 +1,6 @@
 local json = require "src/lib/json"
 local Utils = require "src/utils/utils"
-local Sound = require "src/utils/sound"
+local Sound = require "src/misc/sound"
 
 local Resources = { }
 

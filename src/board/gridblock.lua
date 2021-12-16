@@ -1,4 +1,4 @@
-local Color = require "src/utils/color"
+local Color = require "src/misc/color"
 local Block = require "src/board/block"
 local Vector = require "src/lib/brinevector"
 local CollidableBlock = require "src/board/collidableblock"

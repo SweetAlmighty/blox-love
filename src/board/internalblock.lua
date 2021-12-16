@@ -1,5 +1,5 @@
 local Block = require "src/board/block"
-local Coordinate = require "src/utils/coordinate"
+local Coordinate = require "src/misc/coordinate"
 
 local InternalBlock = Block:extend()
 
