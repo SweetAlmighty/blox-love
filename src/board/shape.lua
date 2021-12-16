@@ -97,10 +97,9 @@ function Shape:new(blocks)
     self._blocks = blocks
     self._snap_points = {}
     self._transform = newTransform()
-    self._color = Color.colors[color_index]
+    self._color, color_index = Color.sequential_color(color_index)
     self._move_blocks = function(i, v) move_blocks(self, i, v) end
     self._add_to_batch = function(i, v) add_to_batch(self, i, v) end
-    color_index = color_index == #Color.colors and 1 or color_index + 1
 
     self:minimize()
 

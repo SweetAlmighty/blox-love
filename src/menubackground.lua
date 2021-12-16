@@ -7,31 +7,22 @@ local Resources = require "src/utils/resources"
 
 local MenuBackground = Object:extend()
 
-local speed = 50
-local color_index = 1
 local random = love.math.random
 local draw = love.graphics.draw
-local position = {x = 0, y = 0}
-local getWidth = love.graphics.getWidth
-local getHeight = love.graphics.getHeight
-local joysticks = love.joystick.getJoysticks()
-local joystick = joysticks[#joysticks]
-local newSpriteBatch = love.graphics.newSpriteBatch
-local windowWidth, windowHeight = getWidth(), getHeight()
+local windowWidth = love.graphics.getWidth()
+local windowHeight = love.graphics.getHeight()
 
 local function rand_y(self) return random(-self._image_size.h, windowHeight + self._image_size.h) end
-local function clamp_offset(value) return Utils.clamp((value - (windowWidth / 2)) / (windowWidth / 2), -1, 1) end
+local function clamp_scalar(value) return Utils.clamp((value - (windowWidth / 2)) / (windowWidth / 2), -1, 1) end
 local function rand_pos(self) return random(-self._image_size.w, windowWidth + self._image_size.w), rand_y(self) end
 
 local function initialize_blocks(self)
-    self._blocks = {}
     local color = nil
     local x, y = 0, 0
     for i = 1, 350 do
         x, y = rand_pos(self)
-        color = Color.colors[color_index]
+        color, self._color_index = Color.sequential_color(self._color_index)
         self._blocks[#self._blocks + 1] = { x = x, y = y, color = color }
-        color_index = color_index == #Color.colors and 1 or color_index + 1
     end
 end
 
@@ -40,19 +31,18 @@ local function draw_blocks(self)
 
     for i, v in ipairs(self._blocks) do
         self._sprite_batch:setColor(v.color.r, v.color.g, v.color.b)
-        self._sprite_batch:add(v.x, v.y, self._rotate, self._scale, self._scale, self._image_size.hw, self._image_size.hh)
+        self._sprite_batch:add(v.x, v.y, self._rotate, self._img_scale, self._img_scale, self._image_size.hw, self._image_size.hh)
     end
 
     draw(self._sprite_batch)
 end
 
 local function update_and_clamp_blocks(self)
-    self._delta = 0.01 * self._offset
-    self._rotate = self._rotate + self._delta
-    self._start = Utils.clamp(self._start + self._delta, -self._scale, self._scale)
+    self._rotate = self._rotate + 0.01 * self._scalar
+    self._offset = Utils.clamp(self._offset + (0.1 * self._scalar), -self._img_scale, self._img_scale)
 
     for i, v in ipairs(self._blocks) do
-        v.x = Utils.wrap(v.x + self._start, -self._image_size.w, windowWidth + self._image_size.w)
+        v.x = Utils.wrap(v.x + self._offset, -self._image_size.w, windowWidth + self._image_size.w)
         if v.x < -self._image_size.w or v.x > windowWidth + self._image_size.w then
             v.y = rand_y(self)
         end
@@ -60,21 +50,29 @@ local function update_and_clamp_blocks(self)
 end
 
 function MenuBackground:new()
-    self._start = 0
     self._delta = 0
-    self._scale = 5
     self._rotate = 0
+    self._scalar = 0
     self._offset = 0
+    self._blocks = {}
+    self._img_scale = 5
+    self._color_index = 1
+    self._accelerometer_scalar = 100
+    self._horizontal_pos = windowWidth/2
     self._image = Resources.load_image('block')
-    self._sprite_batch = newSpriteBatch(self._image)
     self._draw_blocks = function() draw_blocks(self) end
+    self._sprite_batch = love.graphics.newSpriteBatch(self._image)
+    self._update_blocks = function() update_and_clamp_blocks(self) end
+    self._joystick = love.joystick.getJoysticks()[love.joystick.getJoystickCount()]
+
+    self._updater = Updater(60, self._update_blocks)
 
     self._image_size = {
-        w = self._image:getWidth() * self._scale, h = self._image:getHeight() * self._scale,
-        hw = self._image:getWidth() / 2, hh = self._image:getHeight() / 2
+        w = self._image:getWidth() * self._img_scale,
+        h = self._image:getHeight() * self._img_scale,
+        hw = self._image:getWidth() / 2,
+        hh = self._image:getHeight() / 2
     }
-
-    self._updater = Updater(60, function() update_and_clamp_blocks(self) end)
 
     initialize_blocks(self)
 end
@@ -84,16 +82,14 @@ function MenuBackground:update(dt)
 
     if joystick then
         _, axis2 = joystick:getAxes()
-        position.y = position.y + axis2 * speed
-        self._offset = clamp_offset(position.y)
+        self._horizontal_pos = self._horizontal_pos + (axis2 * self._accelerometer_scalar)
+        self._horizontal_pos = Utils.clamp(self._horizontal_pos, 0, windowWidth)
+        self._scalar = clamp_scalar(self._horizontal_pos)
     end
-end
-
-function MenuBackground:mouse_moved(x, y, dx, dy, istouch)
-    if joystick == nil then self._offset = clamp_offset(x) end
 end
 
 function MenuBackground:unpause() self._updater:reset() end
 function MenuBackground:draw() Utils.blur(self._draw_blocks) end
+function MenuBackground:mouse_moved(x, y, dx, dy, istouch) self._scalar = clamp_scalar(x) end
 
 return MenuBackground

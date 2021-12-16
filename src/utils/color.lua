@@ -8,6 +8,10 @@ function Color:split() return self.r, self.g, self.b end
 function Color:new(r, g, b) self.r, self.g, self.b = r, g, b end
 function Color.__tostring(c) return "Color(" .. c.r .. ", " .. c.g.. ", " .. c.b.. ")" end
 
+function Color.sequential_color(index)
+    return Color.colors[index], Utils.wrap(index + 1, 1, #Color.colors)
+end
+
 Color.colors = {}
 local load = Resources.load_data("colors")
 Utils.for_each(load, function(i, v)
