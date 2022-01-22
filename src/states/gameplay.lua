@@ -52,22 +52,18 @@ function Gameplay:draw()
 end
 
 function Gameplay:update(dt)
-    Gameplay.super.update(self, dt)
     if not self._is_paused() then self._board:update(dt) end
 end
 
 function Gameplay:mouse_moved(x, y, dx, dy, istouch)
-    Gameplay.super.mouse_moved(self, x, y, dx, dy, istouch)
     if not self._is_paused() then self._board:mouse_moved(dx, dy) end
 end
 
 function Gameplay:mouse_pressed(x, y, button, istouch, presses)
-    Gameplay.super.mouse_pressed(self, x, y, button, istouch, presses)
     if not self._is_paused() and button == 1 then self._board:mouse_pressed(x, y) end
 end
 
 function Gameplay:mouse_released(x, y, button, istouch, presses)
-    Gameplay.super.mouse_released(self, x, y, button, istouch, presses)
     if not self._is_paused() and button == 1 then self._board:mouse_released() end
 end
 

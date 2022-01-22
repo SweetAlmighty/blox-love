@@ -4,7 +4,7 @@ local Coordinate = require "src/misc/coordinate"
 
 local Block = Object:extend()
 
-Block.texture = Resources.load_image('block')
+Block.texture = Resources.load_image('scaled_block')
 
 Block.width = Block.texture:getWidth()
 Block.height = Block.texture:getHeight()

@@ -218,7 +218,7 @@ function component:draw()-- Every component has the same base:
     if not self.enabled then focusColorChange = 0 end
     local newColor = style.bgColor
     -- Generate bgColor for over and pressed:
-    if self:overIt() and self.type ~= "label" then
+    if self:overIt(love.mouse.getX(), love.mouse.getY()) and self.type ~= "label" then
       if not self.pressed then fs = 1 end
       newColor = changeBrig(newColor, focusColorChange * fs)
       if self.tooltip then

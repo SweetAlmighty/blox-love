@@ -102,16 +102,16 @@ function Board:draw()
     self._layout:draw()
 
     self._sprite_batch:clear()
-    self._grid:draw(self._sprite_batch)
+    self._grid:add_blocks_to_batch(self._sprite_batch)
 
     for i = #self._shapes, 1, -1 do
         if self._shapes[i] ~= self._selected_shape then
-            self._shapes[i]:draw(self._sprite_batch)
+            self._shapes[i]:add_blocks_to_batch(self._sprite_batch)
         end
     end
 
     if self._selected_shape ~= nil then
-        self._selected_shape:draw(self._sprite_batch)
+        self._selected_shape:add_blocks_to_batch(self._sprite_batch)
     end
 
     draw(self._sprite_batch)

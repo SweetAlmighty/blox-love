@@ -9,7 +9,14 @@ gooi.delayVibration = 0
 gooi.dialogMsg = ""
 gooi.dialogH = 0
 gooi.dialogW = 0
-gooi.canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
+
+canvas = function()
+  if gooi.canvas == nil then
+    gooi.canvas = love.graphics.newCanvas(love.graphics.getWidth(), love.graphics.getHeight())
+  end
+  return gooi.canvas
+end
+
 gooi.sx = 1
 gooi.sy = 1
 gooi.defaultFont = love.graphics.newFont(love.window.toPixels(13))
@@ -171,8 +178,8 @@ end
 
 function gooi.setCanvas(c)
   gooi.canvas = c
-  gooi.sx = love.graphics.getWidth() / gooi.canvas:getWidth()
-  gooi.sy = love.graphics.getHeight() / gooi.canvas:getHeight()
+  gooi.sx = love.graphics.getWidth() / canvas():getWidth()
+  gooi.sy = love.graphics.getHeight() / canvas():getHeight()
 end
 
 function gooi.round(num, numDecimalPlaces)
@@ -374,7 +381,7 @@ function gooi.draw(group)
     if not comp.noFlag and not comp.okFlag and not comp.yesFlag
     and not comp.lblFlag then
       if actualGroup == comp.group and comp.visible then
-        comp:draw()-- Draw the base.
+        comp:draw(love.mouse.getX(), love.mouse.getY())-- Draw the base.
 
         love.graphics.setFont(gooi.getFont(comp))-- Specific or a common font.
 
@@ -412,7 +419,7 @@ function gooi.draw(group)
     local text = compWithTooltip.tooltip
     local xTT = math.floor(love.mouse.getX() / gooi.sx)
 
-    if ((love.mouse.getX() / gooi.sx) + ttf:getWidth(text)) >= gooi.canvas:getWidth() then
+    if ((love.mouse.getX() / gooi.sx) + ttf:getWidth(text)) >= canvas():getWidth() then
       xTT = xTT - ttf:getWidth(text)
     end
 
@@ -432,7 +439,7 @@ function gooi.draw(group)
 
   if gooi.showingDialog then
     love.graphics.setFont(gooi.getFont(self))-- Specific or a common font.
-    local w, h = gooi.canvas:getWidth(), gooi.canvas:getHeight()
+    local w, h = canvas():getWidth(), canvas():getHeight()
 
     -- Background for modal
     --love.graphics.setColor(0, 0, 0, 0.5)

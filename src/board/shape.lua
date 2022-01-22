@@ -83,9 +83,9 @@ local function difference(self)
     return (self._snap_points[1]:translation() - self._blocks[1]:translation()):split()
 end
 
-local function add_to_batch(self, i, v)
+local function add_to_batch(self, i, v, sprite_batch)
     pos = v:translation()
-    self._sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
+    sprite_batch:add(pos.x, pos.y, 0, self._scale, self._scale)
 end
 
 local function move_blocks(self, i, v)
@@ -113,10 +113,9 @@ function Shape:new(blocks)
     Utils.for_each(self._blocks, function(i,v) v:color(self._color) end)
 end
 
-function Shape:draw(sprite_batch)
-    if self._sprite_batch == nil then self._sprite_batch = sprite_batch end
+function Shape:add_blocks_to_batch(sprite_batch)
     sprite_batch:setColor(self._color.r, self._color.g, self._color.b)
-    Utils.for_each(self._blocks, self._add_to_batch)
+    Utils.for_each(self._blocks, function(i, v) add_to_batch(self, i, v, sprite_batch) end)
 end
 
 function Shape:move(dx, dy)
