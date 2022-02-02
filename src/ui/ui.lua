@@ -51,36 +51,16 @@ local function sfx_icon() return Sound.sfxMute and "audioOff" or "audioOn" end
 local function music_icon() return Sound.musicMute and "musicOff" or "musicOn" end
 
 local function create_button(text, icon, onRelease)
-	--[[
-	local btn
-
-	local function updateIcon()
-	    if icon then btn:setIcon(icon_path(icon())) end
-	end
-
-	btn = gooi.newButton({text = text})
-				:onRelease(function()
-					onRelease()
-					updateIcon()
-				end)
-
-    updateIcon()
-
-    return btn
-	]]
-
 	local btn = gooi.newButton({text = text})
 
 	local function updateIcon()
 	    if icon then btn:setIcon(icon_path(icon())) end
 	end
 
-	local function onButtonRelease()
+	btn:onRelease(function()
 		onRelease()
 		updateIcon()
-	end
-
-	btn:onRelease(onButtonRelease)
+	end)
 
     updateIcon()
 
