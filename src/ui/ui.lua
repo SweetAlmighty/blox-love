@@ -8,6 +8,10 @@ local back = Resources.load_sfx('Go back sounds 5')
 local forward = Resources.load_sfx('Go forward sounds 1')
 local buttonPress = Resources.load_sfx('Switch sounds 2')
 
+local UI = {}
+local settings = nil
+local clicked = false
+
 local style = {
     bgColor = { 0.5, 0.5, 1 },
     font = Resources.load_font("Uni Sans Heavy", 30),
@@ -42,12 +46,12 @@ local function home_icon() return "home" end
 local function next_icon() return "next" end
 local function return_icon() return "return" end
 local function checkmark() return "checkmark" end
+local function icon_path(name) return "data/images/" .. name .. ".png" end
 local function sfx_icon() return Sound.sfxMute and "audioOff" or "audioOn" end
 local function music_icon() return Sound.musicMute and "musicOff" or "musicOn" end
 
-local function icon_path(name) return "data/images/" .. name .. ".png" end
-
 local function create_button(text, icon, onRelease)
+	--[[
 	local btn
 
 	local function updateIcon()
@@ -59,6 +63,24 @@ local function create_button(text, icon, onRelease)
 					onRelease()
 					updateIcon()
 				end)
+
+    updateIcon()
+
+    return btn
+	]]
+
+	local btn = gooi.newButton({text = text})
+
+	local function updateIcon()
+	    if icon then btn:setIcon(icon_path(icon())) end
+	end
+
+	local function onButtonRelease()
+		onRelease()
+		updateIcon()
+	end
+
+	btn:onRelease(onButtonRelease)
 
     updateIcon()
 
@@ -76,7 +98,7 @@ local function create_panel(title, info, type, width, height)
 	local panel = gooi.newPanel(info)
 	panel:setColspan(1, 1, height)
 	panel:add(gooi.newLabel({text = title}):center())
-
+	
 	return panel
 end
 
@@ -120,13 +142,17 @@ local function create_modal(text, style, ok)
     gooi.showingDialog = true
 end
 
-local UI = {}
-local clicked = false
-local settings = nil
-
 local function set_icon()
 	clicked = not clicked
-    settings:setIcon("data/images/" .. (clicked and "cross" or "gear") .. ".png")
+    settings:setIcon(icon_path(clicked and "cross" or "gear"))--"data/images/" .. (clicked and "cross" or "gear") .. ".png")
+end
+
+function UI.remove(comp)
+	gooi.removeComponent(comp)
+end
+
+function UI.grid_complete_modal(clicked)
+    create_modal("SUCCESS!", "alert", clicked)
 end
 
 function UI.main_menu()
@@ -152,6 +178,25 @@ function UI.main_menu()
     return panel
 end
 
+function UI.main_settings()
+    local panel = create_panel("SETTINGS", {
+        x = getWidth()/3, y = getHeight()/4,
+        w = getWidth()/3, h = getHeight()/2
+    }, "grid", 3, 3)
+
+    panel:setColspan(2, 1, 2)
+    	 :setColspan(3, 1, 2)
+
+    panel:add(
+        create_slider(Sound.musicVolume, update_music_slider),
+        create_button("", music_icon, update_music_mute),
+        create_slider(Sound.sfxVolume, update_sfx_slider),
+        create_button("", sfx_icon, update_sfx_mute)
+    ):setOpaque(true):setVisible(false)
+
+    return panel
+end
+
 function UI.game_ui(on_settings_clicked)
     settings = gooi.newButton({text = "", w = 50, h = 50})
                          :setIcon("data/images/gear.png")
@@ -169,25 +214,6 @@ function UI.game_ui(on_settings_clicked)
     })
 
     panel:add(settings, "t-r")
-
-    return panel
-end
-
-function UI.main_settings()
-    local panel = create_panel("SETTINGS", {
-        x = getWidth()/3, y = getHeight()/4,
-        w = getWidth()/3, h = getHeight()/2
-    }, "grid", 3, 3)
-
-    panel:setColspan(2, 1, 2)
-    	 :setColspan(3, 1, 2)
-
-    panel:add(
-        create_slider(Sound.musicVolume, update_music_slider),
-        create_button("", music_icon, update_music_mute),
-        create_slider(Sound.sfxVolume, update_sfx_slider),
-        create_button("", sfx_icon, update_sfx_mute)
-    ):setOpaque(true):setVisible(false)
 
     return panel
 end
@@ -242,10 +268,6 @@ function UI.game_settings(on_reset, on_regen)
     ):setOpaque(true):setVisible(false)
 
     return panel
-end
-
-function UI.grid_complete_modal(clicked)
-    create_modal("SUCCESS!", "alert", clicked)
 end
 
 return UI

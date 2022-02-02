@@ -23,7 +23,7 @@ function love.resize(w, h)
     state_machine:resize(w, h)
 end
 
-function love.mousemoved(x, y, dx, dy, istouch)
+function love.mousemoved(x, y, _dx, _dy, istouch)
     local _x, _y, dx, dy = Pusher.toGame(x, y)
     gooi.moved(_, _x, _y)
     state_machine:mouse_moved(_x, _y, dx, dy, istouch)
@@ -41,5 +41,10 @@ function love.mousereleased(x, y, button, istouch, presses)
     state_machine:mouse_released(_x, _y, button, istouch, presses)
 end
 
-function love.update(dt)state_machine:update(dt) end
+function love.update(dt) state_machine:update(dt) end
 function love.keypressed(key) state_machine:input(key) end
+
+-- Overriding to avoid double processing touch inputs
+function love.touchmoved(x, y, _dx, _dy, istouch) end
+function love.touchpressed(x, y, button, istouch, presses) end
+function love.touchreleased(x, y, button, istouch, presses) end
