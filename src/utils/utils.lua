@@ -1,5 +1,3 @@
-local moonshine = require "src/lib/moonshine"
-
 local Utils = {}
 
 local mmin = math.min
@@ -7,9 +5,6 @@ local mmax = math.max
 local sqrt = math.sqrt
 local rand = math.random
 local time = love.timer.getTime
-
-local box_blur = moonshine(moonshine.effects.boxblur)
-box_blur.boxblur.radius = 8
 
 function Utils.distance(p1, p2)
     local dx = p1.x - p2.x
@@ -27,7 +22,17 @@ function Utils.shuffle(list)
     return shuffled
 end
 
-function Utils.blur(func) box_blur(func) end
+local box_blur = nil
+function Utils.blur(func)
+    if box_blur == nil then
+        -- HACK: Allows for Pusher to be initialized before moonshine
+        local moonshine = require "src/lib/moonshine"
+        box_blur = moonshine(moonshine.effects.boxblur)
+        box_blur.boxblur.radius = 8
+    end
+    box_blur(func)
+end
+
 function Utils.now() return time() * 1000 end
 function Utils.clamp(value, min, max) return mmin(max, mmax(min, value)) end
 function Utils.for_each(table, func) for i, v in ipairs(table) do func(i, v) end end

@@ -8,7 +8,7 @@ local setColor = love.graphics.setColor
 local getWidth = love.graphics.getWidth
 local getHeight = love.graphics.getHeight
 local rectangle = love.graphics.rectangle
-local getSafeArea = love.window.getSafeArea
+local getSafeArea = function() return 0, 0, getWidth(), getHeight() end
 
 function Layout:new(blocks)
     NLay.update(getSafeArea())
@@ -20,7 +20,7 @@ function Layout:new(blocks)
     local height = getHeight() - (self.padding * 2)
 
     self.grid = insideRoot:constraint(root, root)
-    :size(getWidth() - (400 + (self.padding * 2)), height)
+    :size(getWidth() - ((getHeight()/2) + (self.padding * 2)), height)
 
     self.side = insideRoot:constraint(root, self.grid, nil, root)
     :size(0, height)

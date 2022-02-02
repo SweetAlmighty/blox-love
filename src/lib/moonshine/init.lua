@@ -28,7 +28,7 @@ local moonshine = {}
 
 moonshine.draw_shader = function(buffer, shader)
   local front, back = buffer()
-  love.graphics.setCanvas(front)
+  love.graphics.setCanvas({front, stencil=true})
   love.graphics.clear()
   if shader ~= love.graphics.getShader() then
     love.graphics.setShader(shader)
@@ -39,7 +39,9 @@ end
 moonshine.chain = function(w,h,effect)
   -- called as moonshine.chain(effect)'
   if h == nil then
-    effect, w,h = w, love.window.getMode()
+    effect = w
+    w = love.graphics.getWidth()
+    h = love.graphics.getHeight()
   end
   assert(effect ~= nil, "No effect")
 
@@ -82,7 +84,7 @@ moonshine.chain = function(w,h,effect)
 
     -- present result
     love.graphics.setShader()
-    love.graphics.setCanvas(canvas)
+    love.graphics.setCanvas({canvas, stencil=true})
     love.graphics.draw(front,0,0)
 
     -- restore state

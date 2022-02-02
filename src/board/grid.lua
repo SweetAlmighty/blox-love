@@ -52,7 +52,7 @@ end
 
 function Grid:get_shapes() return self._internal_grid:get_shapes() end
 
-function Grid:draw(sprite_batch)
+function Grid:add_blocks_to_batch(sprite_batch)
     for _, column in ipairs(self._blocks) do
         for _, row in pairs(column) do
             sprite_batch:setColor(row:color():split())
