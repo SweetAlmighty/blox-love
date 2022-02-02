@@ -1,4 +1,5 @@
 local Block = require "src/board/block"
+local Utils = require "src/utils/utils"
 local Object = require "src/lib/classic"
 local GridBlock = require "src/board/gridblock"
 local InternalGrid = require "src/board/internalgrid"
@@ -10,13 +11,11 @@ local newTransform = love.math.newTransform
 local newSpriteBatch = love.graphics.newSpriteBatch
 
 function Grid:new(center)
-    self._shapes = {}
     self._blocks = {}
     self._center = center
     Grid.rows = random(4, 8)
     Grid.columns = random(4, 8)
     self._transform = newTransform()
-    self._sprite_batch = newSpriteBatch(Block.texture)
     self._internal_grid = InternalGrid(Grid.columns, Grid.rows)
 
     self:initialize()
@@ -69,6 +68,11 @@ function Grid:is_complete()
     end
 
     return true
+end
+
+function Grid:clear()
+    Utils.wipe(self._blocks)
+    self._internal_grid:clear()
 end
 
 return Grid

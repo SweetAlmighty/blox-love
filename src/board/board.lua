@@ -39,21 +39,30 @@ local function deselect_shape(self)
     self._selected_shape = nil
 end
 
-function Board:new(on_grid_complete)
+function Board:new()
     self._rects = {}
     self._shapes = {}
     self._layout = Layout()
-    self._on_grid_complete = on_grid_complete
     self._sprite_batch = newSpriteBatch(Block.texture)
     self._shape_interaction = Resources.load_sfx("Switch sounds 1")
 
     self:create_grid_and_shapes()
 end
 
+function Board:set_on_grid_complete(on_grid_complete)
+    self._on_grid_complete = on_grid_complete
+end
+
 function Board:resize() self._layout:resize() end
 
 function Board:create_grid_and_shapes()
+    if self._grid ~= nil then
+        self._grid:clear()
+        self._grid = nil
+    end
+
     self._grid = Grid(self._layout:get_grid_center())
+
     self:create_shapes()
     self:segment_sideboard()
     self:place_shapes()
@@ -82,9 +91,14 @@ function Board:reset()
     self._selected_shape = nil
 end
 
-function Board:regen()
+function Board:clear()
+    for i=1,#self._shapes do Utils.wipe(self._shapes[i]) end
     Utils.wipe(self._shapes)
     Utils.wipe(CollidableBlock.blocks)
+end
+
+function Board:regen()
+    self:clear()
     self._selected_shape = nil
     self:create_grid_and_shapes()
 end

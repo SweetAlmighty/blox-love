@@ -49,6 +49,12 @@ function InternalGrid:get_shapes() return self._shapes end
 
 function InternalGrid:get_block(column, row) return self._blocks[column][row] end
 
+function InternalGrid:clear()
+    Utils.wipe(self._blocks)
+    for i=1,#self._shapes do Utils.wipe(self._shapes[i]) end
+    Utils.wipe(self._shapes)
+end
+
 function InternalGrid:create_gaps()
     -- Determine whether this grid will contain gaps
     if random() > 0.5 then
