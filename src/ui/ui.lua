@@ -124,7 +124,7 @@ end
 
 local function set_icon()
 	clicked = not clicked
-    settings:setIcon(icon_path(clicked and "cross" or "gear"))--"data/images/" .. (clicked and "cross" or "gear") .. ".png")
+    settings:setIcon(icon_path(clicked and "cross" or "gear"))
 end
 
 function UI.remove(comp)

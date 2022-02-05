@@ -119,6 +119,8 @@ function gooi.newSlider(params)
       end
     end
 
+    print(thePos)
+
     local v = nil
     self.displacement = (thePos - (self.x + self.h / 2))
     if self.displacement > (self.w - self.h) then self.displacement = self.w - self.h end
