@@ -5,12 +5,6 @@ local Object = require "src/lib/classic"
 local Resources = require "src/utils/resources"
 local StateMachine = require "src/states/statemachine"
 
-function love.load()
-    Utils.seed_rand()
-    Resources.load()
-    state_machine = StateMachine()
-end
-
 function love.draw()
     Pusher.start()
         state_machine:draw()
@@ -18,9 +12,20 @@ function love.draw()
     Pusher.finish()
 end
 
+function love.update(dt)
+    gooi.update(dt)
+    state_machine:update(dt)
+end
+
 function love.resize(w, h)
     Pusher.resize(w, h)
     state_machine:resize(w, h)
+end
+
+function love.load()
+    Utils.seed_rand()
+    Resources.load()
+    state_machine = StateMachine()
 end
 
 function love.mousemoved(x, y, _dx, _dy, istouch)
@@ -41,7 +46,6 @@ function love.mousereleased(x, y, button, istouch, presses)
     state_machine:mouse_released(_x, _y, button, istouch, presses)
 end
 
-function love.update(dt) state_machine:update(dt) end
 function love.keypressed(key) state_machine:input(key) end
 
 -- Overriding to avoid double processing touch inputs
