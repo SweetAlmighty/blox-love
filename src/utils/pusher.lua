@@ -2,7 +2,7 @@ local Push = require "src/lib/push"
 
 local Pusher = {}
 
-local thing = { fullscreen = true, resizable = false, ... }
+local thing = { fullscreen = false, resizable = false, ... }
 
 local _x = 0
 local _y = 0

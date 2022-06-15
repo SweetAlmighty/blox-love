@@ -89,7 +89,11 @@ function MenuBackground:update()
 end
 
 function MenuBackground:unpause() self._updater:reset() end
-function MenuBackground:draw() Utils.blur(self._draw_blocks) end
+function MenuBackground:draw()
+    --Utils.blur(self._draw_blocks)
+    self._draw_blocks()
+end
+
 function MenuBackground:mouse_moved(x, y, dx, dy, istouch) if not self._joystick then self._scalar = clamp_scalar(x) end end
 
 return MenuBackground

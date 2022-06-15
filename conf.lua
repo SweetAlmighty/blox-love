@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.version = "11.4"                  -- The LÖVE version this game was made for (string)
+    t.version = "11.3"                  -- The LÖVE version this game was made for (string)
     t.console = false                   -- Attach a console (boolean, Windows only)
     t.gammacorrect = false              -- Enable gamma-correct rendering, when supported by the system (boolean)
     t.externalstorage = false           -- True to save files (and read from the save directory) in external storage on Android (boolean)
