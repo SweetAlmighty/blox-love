@@ -153,7 +153,7 @@ function UI.main_menu()
 
     local panel = create_panel("BLOX", {x = 0, y = 0, w = getWidth(), h = getHeight()}, "grid", 5, 3)
     panel:add(create_button("PLAY", nil, on_play_released), "3,2")
-    panel:add(create_button("EXIT", nil, on_exit_released), "4,2")
+    --panel:add(create_button("EXIT", nil, on_exit_released), "4,2")
 
     return panel
 end

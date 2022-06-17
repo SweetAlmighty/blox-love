@@ -13,8 +13,8 @@ local newSpriteBatch = love.graphics.newSpriteBatch
 function Grid:new(center)
     self._blocks = {}
     self._center = center
-    Grid.rows = random(4, 8)
-    Grid.columns = random(4, 8)
+    Grid.rows = random(4, 6)
+    Grid.columns = random(4, 6)
     self._transform = newTransform()
     self._internal_grid = InternalGrid(Grid.columns, Grid.rows)
 
