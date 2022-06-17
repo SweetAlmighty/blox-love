@@ -47,8 +47,6 @@ end
 
 function Gameplay:draw()
     self._draw()
-    --if self._is_paused() then Utils.blur(self._draw)
-    --else self._draw() end
 end
 
 function Gameplay:update(dt)

@@ -15,7 +15,7 @@ function MainMenu:new()
     self._ui = UI.game_ui(function(vis)
         self._settings:setVisible(vis)
         self._menu.sons[2].ref:setVisible(not vis)
-        self._menu.sons[3].ref:setVisible(not vis)
+        --self._menu.sons[3].ref:setVisible(not vis)
     end)
 end
 
