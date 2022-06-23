@@ -4,9 +4,7 @@ local Resources = require "src/utils/resources"
 
 local getWidth = love.graphics.getWidth
 local getHeight = love.graphics.getHeight
-local back = Resources.load_sfx('Go back sounds 5')
-local forward = Resources.load_sfx('Go forward sounds 1')
-local buttonPress = Resources.load_sfx('Switch sounds 2')
+local buttonPress = Resources.load_sfx('Go forward sounds 1')
 
 local UI = {}
 local settings = nil
@@ -215,7 +213,7 @@ function UI.game_settings(on_reset, on_regen)
 
 	local function on_home_release()
 		buttonPress:play()
-	    create_modal("Return Home?", "modal", function()
+	    create_modal("Main Menu?", "modal", function()
 	    	on_press()
 	        state_machine:pop()
 	    end)

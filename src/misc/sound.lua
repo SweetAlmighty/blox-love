@@ -2,12 +2,13 @@ local Object = require "src/lib/classic"
 
 local Sound = Object:extend()
 
+local play = love.audio.play
 local newSource = love.audio.newSource
 
 function Sound:new(filename, type)
     self._type = type
-    self._source = nil
     self._data = love.sound.newSoundData(filename)
+    self._source = newSource(self._data, self._type)
 end
 
 function Sound:set_volume()
@@ -24,16 +25,14 @@ function Sound:set_volume()
 end
 
 function Sound:play()
-    self._source = newSource(self._data, self._type)
-    self:set_volume()
-    self._source:play()
+    self._source:stop()
+    play(self._source)
 end
 
 function Sound:play_looping()
-    self._source = newSource(self._data, self._type)
-    self:set_volume()
+    self._source:stop()
     self._source:setLooping(true)
-    self._source:play()
+    play(self._source)
 end
 
 function Sound:stop()

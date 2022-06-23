@@ -1,29 +1,21 @@
-# README #
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-This README would normally document whatever steps are necessary to get your application up and running.
+# TLDR #
 
-### What is this repository for? ###
+Small puzzle side project that was originally intended to be a mobile game to pass the time with.
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### PACKAGES ###
 
-### How do I get set up? ###
+This repository utilizes the following packages:
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* https://github.com/tavuntu/gooi
+* https://github.com/vrld/moonshine
+* https://github.com/rxi/classic
+* https://github.com/novemberisms/brinevector
+* https://github.com/rxi/json.lua
+* https://github.com/MikuAuahDark/NPad93
 
-### Contribution guidelines ###
+I also utilized the following repositories to aide in development:
 
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+* https://github.com/camchenry/boon
+* https://github.com/Davidobot/love.js

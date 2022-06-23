@@ -44,7 +44,7 @@ function Board:new()
     self._shapes = {}
     self._layout = Layout()
     self._sprite_batch = newSpriteBatch(Block.texture)
-    self._shape_interaction = Resources.load_sfx("Switch sounds 1")
+    self._shape_interaction = Resources.load_sfx("Switch sounds 2")
 
     self:create_grid_and_shapes()
 end
