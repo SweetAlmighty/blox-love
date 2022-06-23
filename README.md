@@ -2,6 +2,8 @@
 
 # TLDR #
 
+Game is playable [here](https://brian-sweet.itch.io/blox).
+
 Small puzzle side project that was originally intended to be a mobile game to pass the time with.
 
 ### PACKAGES ###
